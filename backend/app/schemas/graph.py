@@ -52,3 +52,41 @@ class ComponentsResponse(BaseModel):
     directed: bool
     mode: Literal["undirected", "weak"]
     components: list[list[str]] = Field(default_factory=list)
+
+
+# ── New feature schemas ──────────────────────────────────────────────────────
+
+class LargestComponentResponse(BaseModel):
+    directed: bool
+    mode: Literal["undirected", "weak"]
+    largest_component: list[str] = Field(default_factory=list)
+    size: int
+    total_components: int
+
+
+class BipartiteResponse(BaseModel):
+    directed: bool
+    is_bipartite: bool
+    # Two groups when bipartite; empty lists when not bipartite or graph is empty
+    group_a: list[str] = Field(default_factory=list)
+    group_b: list[str] = Field(default_factory=list)
+
+
+class DiameterResponse(BaseModel):
+    directed: bool
+    # None means the graph is disconnected (infinite diameter) or empty
+    diameter: int | None
+    is_connected: bool
+
+
+class CycleResponse(BaseModel):
+    directed: bool
+    has_cycle: bool
+    # One example cycle (node sequence) when found; empty when no cycle
+    example_cycle: list[str] = Field(default_factory=list)
+
+
+class GirthResponse(BaseModel):
+    directed: bool
+    # None means no cycle exists (girth = infinity)
+    girth: int | None
