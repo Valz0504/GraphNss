@@ -1,0 +1,29 @@
+[project]
+name = "backend"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.136.1",
+    "uvicorn[standard]>=0.47.0",
+    "python-dotenv>=1.2.2",
+    "pydantic-settings>=2.0.0",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=9.0.3",
+    "httpx>=0.28.1",
+    "ruff>=0.15.14",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
