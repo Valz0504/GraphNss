@@ -2,19 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import type { ConsoleLine } from "./types";
+
 const MIN_HEIGHT    = 36;   // collapsed — just the header bar
 const DEFAULT_HEIGHT = 220;
 const MAX_HEIGHT    = 560;
 
-interface ConsoleLine {
-  type: "info" | "output" | "error" | "muted";
-  text: string;
+export interface ConsolePanelProps {
+  lines: ConsoleLine[];
 }
-
-const INITIAL_LINES: ConsoleLine[] = [
-  { type: "info",  text: "GraphNss v0.1.0 — siap." },
-  { type: "muted", text: "Masukkan edge list dan pilih algoritma untuk memulai simulasi." },
-];
 
 /* ── macOS-style traffic light dots ── */
 function TrafficLights({ onClose }: { onClose: () => void }) {
@@ -37,10 +33,10 @@ function TrafficLights({ onClose }: { onClose: () => void }) {
   );
 }
 
-export default function ConsolePanel() {
+export default function ConsolePanel({ lines }: ConsolePanelProps) {
   const [height, setHeight]   = useState(DEFAULT_HEIGHT);
   const [isOpen, setIsOpen]   = useState(true);
-  const [lines]               = useState<ConsoleLine[]>(INITIAL_LINES);
+  const bottomRef             = useRef<HTMLDivElement | null>(null);
 
   const prevHeight    = useRef(DEFAULT_HEIGHT);
   const isDragging    = useRef(false);
@@ -73,6 +69,11 @@ export default function ConsolePanel() {
       window.removeEventListener("mouseup",   onMouseUp);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    bottomRef.current?.scrollIntoView({ behavior: "auto" });
+  }, [lines.length, isOpen]);
 
   /* ── Toggle open/closed ── */
   const close = () => {
@@ -189,10 +190,12 @@ export default function ConsolePanel() {
           <div className="mt-1 flex items-center gap-2 text-[12.5px]">
             <span style={{ color: "var(--text-muted)" }}>$</span>
             <span
-              className="inline-block h-[14px] w-[7px] animate-pulse-soft"
+              className="inline-block h-3.5 w-1.75 animate-pulse-soft"
               style={{ background: "var(--primary)", borderRadius: "1px" }}
             />
           </div>
+
+          <div ref={bottomRef} />
         </div>
       )}
     </div>

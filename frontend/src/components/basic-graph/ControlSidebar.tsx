@@ -2,16 +2,11 @@
 
 import { useRef, useState } from "react";
 
+import type { AlgorithmId } from "./types";
+
 /* ─────────────────────────────────────────────
    Types
 ───────────────────────────────────────────── */
-type AlgorithmId =
-  | "dfs"
-  | "bfs"
-  | "cek-lintasan"
-  | "cek-keterhubungan"
-  | "cari-komponen";
-
 type InputType = "start-node" | "node-pair" | "none";
 
 interface AlgorithmOption {
@@ -157,9 +152,21 @@ function ToggleChip({
 ───────────────────────────────────────────── */
 interface ControlSidebarProps {
   onClose?: () => void;
+  isBusy?: boolean;
+  onVisualise: (payload: { graphInput: string; directed: boolean; weighted: boolean }) => void;
+  onSimulate: (payload: {
+    graphInput: string;
+    directed: boolean;
+    weighted: boolean;
+    algorithm: AlgorithmId;
+    startNode?: string;
+    nodeA?: string;
+    nodeB?: string;
+  }) => void;
+  onResetAll?: () => void;
 }
 
-export default function ControlSidebar({ onClose }: ControlSidebarProps) {
+export default function ControlSidebar({ onClose, isBusy, onVisualise, onSimulate, onResetAll }: ControlSidebarProps) {
   /* Graph input state */
   const [graphInput, setGraphInput] = useState<string>("");
   const [isDirected, setIsDirected] = useState<boolean>(false);
@@ -176,8 +183,15 @@ export default function ControlSidebar({ onClose }: ControlSidebarProps) {
   const currentAlgo = ALGORITHMS.find((a) => a.id === selectedAlgo)!;
 
   const handleSimulate = () => {
-    // Placeholder — will be wired to backend in later sprint
-    console.log("Simulate:", { graphInput, isDirected, isWeighted, selectedAlgo, startNode, nodeA, nodeB });
+    onSimulate({
+      graphInput,
+      directed: isDirected,
+      weighted: isWeighted,
+      algorithm: selectedAlgo,
+      startNode,
+      nodeA,
+      nodeB,
+    });
   };
 
   const handleReset = () => {
@@ -185,6 +199,7 @@ export default function ControlSidebar({ onClose }: ControlSidebarProps) {
     setStartNode("");
     setNodeA("");
     setNodeB("");
+    onResetAll?.();
   };
 
   /* .txt file upload */
@@ -203,8 +218,7 @@ export default function ControlSidebar({ onClose }: ControlSidebarProps) {
 
   /* Placeholder visualise handler */
   const handleVisualise = () => {
-    // Will be wired to canvas renderer in later sprint
-    console.log("Visualise:", { graphInput, isDirected, isWeighted });
+    onVisualise({ graphInput, directed: isDirected, weighted: isWeighted });
   };
 
   return (
@@ -443,11 +457,14 @@ export default function ControlSidebar({ onClose }: ControlSidebarProps) {
             id="btn-visualise"
             type="button"
             onClick={handleVisualise}
+            disabled={!!isBusy}
             className="w-full flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-all duration-150 hover:brightness-110 active:scale-[0.98]"
             style={{
               color: "var(--primary-light)",
               background: "rgba(220,38,38,0.1)",
               border: "1px solid rgba(220,38,38,0.4)",
+              opacity: isBusy ? 0.55 : 1,
+              cursor: isBusy ? "not-allowed" : "pointer",
             }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -465,10 +482,13 @@ export default function ControlSidebar({ onClose }: ControlSidebarProps) {
             id="btn-simulate"
             type="button"
             onClick={handleSimulate}
+            disabled={!!isBusy}
             className="w-full rounded-lg py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:brightness-110 active:scale-[0.98]"
             style={{
               background: "linear-gradient(135deg, var(--primary), var(--primary-dark))",
               boxShadow: "0 4px 16px rgba(220,38,38,0.4)",
+              opacity: isBusy ? 0.55 : 1,
+              cursor: isBusy ? "not-allowed" : "pointer",
             }}
           >
             ▶ Simulasikan
