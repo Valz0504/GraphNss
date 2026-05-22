@@ -23,6 +23,11 @@ export const metadata: Metadata = {
   description:
     "Interactive graph theory algorithm visualizer. Explore DFS, BFS, Dijkstra, MST, and more with step-by-step animation.",
   keywords: ["graph theory", "algorithm visualizer", "DFS", "BFS", "Dijkstra"],
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
