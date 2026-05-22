@@ -50,6 +50,36 @@ const ALGORITHMS: AlgorithmOption[] = [
     inputType: "none",
     description: "Temukan semua komponen terhubung",
   },
+  {
+    id: "komponen-terbesar",
+    label: "6. Komponen Terbesar",
+    inputType: "none",
+    description: "Tentukan komponen terhubung terbesar dalam graf",
+  },
+  {
+    id: "cek-bipartite",
+    label: "7. Cek Bipartite",
+    inputType: "none",
+    description: "Apakah graf dapat dibagi menjadi dua kelompok simpul (bipartite)?",
+  },
+  {
+    id: "diameter",
+    label: "8. Diameter Graf",
+    inputType: "none",
+    description: "Jarak terpanjang dari semua pasangan simpul yang terhubung",
+  },
+  {
+    id: "deteksi-siklus",
+    label: "9. Deteksi Siklus",
+    inputType: "none",
+    description: "Apakah terdapat siklus dalam graf?",
+  },
+  {
+    id: "girth",
+    label: "10. Girth (Sabuk)",
+    inputType: "none",
+    description: "Panjang siklus terkecil dalam graf",
+  },
 ];
 
 /* ─────────────────────────────────────────────

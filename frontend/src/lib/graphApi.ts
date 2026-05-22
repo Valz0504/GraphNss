@@ -95,3 +95,57 @@ export function checkConnectivity(params: {
 export function findComponents(params: { directed: boolean; edges: GraphEdgeInput[] }) {
   return postJson<ComponentsResponse>("/api/v1/graph/components", params);
 }
+
+// ── New feature API functions ────────────────────────────────────────────────
+
+export interface LargestComponentResponse {
+  directed: boolean;
+  mode: "undirected" | "weak";
+  largest_component: string[];
+  size: number;
+  total_components: number;
+}
+
+export interface BipartiteResponse {
+  directed: boolean;
+  is_bipartite: boolean;
+  group_a: string[];
+  group_b: string[];
+}
+
+export interface DiameterResponse {
+  directed: boolean;
+  diameter: number | null;
+  is_connected: boolean;
+}
+
+export interface CycleResponse {
+  directed: boolean;
+  has_cycle: boolean;
+  example_cycle: string[];
+}
+
+export interface GirthResponse {
+  directed: boolean;
+  girth: number | null;
+}
+
+export function getLargestComponent(params: { directed: boolean; edges: GraphEdgeInput[] }) {
+  return postJson<LargestComponentResponse>("/api/v1/graph/largest-component", params);
+}
+
+export function checkBipartite(params: { directed: boolean; edges: GraphEdgeInput[] }) {
+  return postJson<BipartiteResponse>("/api/v1/graph/bipartite", params);
+}
+
+export function getDiameter(params: { directed: boolean; edges: GraphEdgeInput[] }) {
+  return postJson<DiameterResponse>("/api/v1/graph/diameter", params);
+}
+
+export function detectCycle(params: { directed: boolean; edges: GraphEdgeInput[] }) {
+  return postJson<CycleResponse>("/api/v1/graph/cycle", params);
+}
+
+export function getGirth(params: { directed: boolean; edges: GraphEdgeInput[] }) {
+  return postJson<GirthResponse>("/api/v1/graph/girth", params);
+}
