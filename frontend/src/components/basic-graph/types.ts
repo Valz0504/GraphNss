@@ -3,7 +3,12 @@ export type AlgorithmId =
   | "bfs"
   | "cek-lintasan"
   | "cek-keterhubungan"
-  | "cari-komponen";
+  | "cari-komponen"
+  | "komponen-terbesar"
+  | "cek-bipartite"
+  | "diameter"
+  | "deteksi-siklus"
+  | "girth";
 
 export interface GraphEdgeInput {
   u: string;

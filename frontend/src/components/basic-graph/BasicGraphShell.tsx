@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from "react";
 
-import { checkConnectivity, checkPath, findComponents, simulateBfs, simulateDfs } from "@/lib/graphApi";
+import { checkBipartite, checkConnectivity, checkPath, detectCycle, findComponents, getDiameter, getGirth, getLargestComponent, simulateBfs, simulateDfs } from "@/lib/graphApi";
 import ControlSidebar from "./ControlSidebar";
 import ConsolePanel from "./ConsolePanel";
 import GraphCanvas from "./GraphCanvas";
@@ -436,6 +436,119 @@ export default function BasicGraphShell() {
             appendLine({ type: "output", text: `  ${idx + 1}. { ${c.join(", ")} }` });
           });
 
+          setIsBusy(false);
+          return;
+        }
+
+        if (payload.algorithm === "komponen-terbesar") {
+          appendLine({ type: "info", text: "Mencari komponen terbesar..." });
+          const res = await getLargestComponent({ directed: payload.directed, edges });
+          if (token !== runTokenRef.current) return;
+
+          const modeNote = res.mode === "weak" ? " (weak)" : "";
+          if (res.size === 0) {
+            appendLine({ type: "output", text: "Graf kosong — tidak ada komponen." });
+          } else {
+            appendLine({
+              type: "output",
+              text: `Komponen terbesar${modeNote}: ${res.size} node dari ${res.total_components} komponen.`,
+            });
+            appendLine({ type: "output", text: `  Node: { ${res.largest_component.join(", ")} }` });
+            // Highlight the largest component
+            setPathNodeIds(new Set(res.largest_component));
+            setVisitedNodeIds(new Set());
+            setEdgeHighlights(new Set());
+          }
+          setIsBusy(false);
+          return;
+        }
+
+        if (payload.algorithm === "cek-bipartite") {
+          appendLine({ type: "info", text: "Mengecek apakah graf bipartite..." });
+          const res = await checkBipartite({ directed: payload.directed, edges });
+          if (token !== runTokenRef.current) return;
+
+          if (res.is_bipartite) {
+            appendLine({ type: "output", text: "Graf adalah BIPARTITE ✓" });
+            appendLine({ type: "output", text: `  Grup A: { ${res.group_a.join(", ")} }` });
+            appendLine({ type: "output", text: `  Grup B: { ${res.group_b.join(", ")} }` });
+            // Highlight group_a as path (blue-ish), group_b as visited (red-ish)
+            setPathNodeIds(new Set(res.group_a));
+            setVisitedNodeIds(new Set(res.group_b));
+            setEdgeHighlights(new Set());
+          } else {
+            appendLine({ type: "output", text: "Graf BUKAN bipartite ✗ (mengandung siklus ganjil)" });
+            setPathNodeIds(new Set());
+            setVisitedNodeIds(new Set());
+            setEdgeHighlights(new Set());
+          }
+          setIsBusy(false);
+          return;
+        }
+
+        if (payload.algorithm === "diameter") {
+          appendLine({ type: "info", text: "Menghitung diameter graf..." });
+          const res = await getDiameter({ directed: payload.directed, edges });
+          if (token !== runTokenRef.current) return;
+
+          if (!res.is_connected) {
+            appendLine({
+              type: "output",
+              text: "Diameter = ∞ (graf tidak terhubung — ada node yang tidak bisa dicapai)",
+            });
+          } else if (res.diameter === null) {
+            appendLine({ type: "output", text: "Graf kosong — diameter tidak terdefinisi." });
+          } else {
+            appendLine({ type: "output", text: `Diameter graf = ${res.diameter}` });
+          }
+          setIsBusy(false);
+          return;
+        }
+
+        if (payload.algorithm === "deteksi-siklus") {
+          appendLine({ type: "info", text: "Mendeteksi siklus dalam graf..." });
+          const res = await detectCycle({ directed: payload.directed, edges });
+          if (token !== runTokenRef.current) return;
+
+          if (res.has_cycle) {
+            appendLine({ type: "output", text: "Graf MENGANDUNG siklus ✓" });
+            if (res.example_cycle.length > 0) {
+              appendLine({
+                type: "output",
+                text: `  Contoh siklus: ${res.example_cycle.join(" → ")}`,
+              });
+              // Highlight cycle nodes
+              const cycleNodes = new Set(res.example_cycle);
+              setVisitedNodeIds(cycleNodes);
+              // Highlight cycle edges
+              const cycleEdgeKeys = new Set<string>();
+              for (let i = 0; i < res.example_cycle.length - 1; i++) {
+                const u = res.example_cycle[i]!;
+                const v = res.example_cycle[i + 1]!;
+                cycleEdgeKeys.add(edgeKey(u, v, payload.directed));
+              }
+              setEdgeHighlights(cycleEdgeKeys);
+              setPathNodeIds(new Set());
+            }
+          } else {
+            appendLine({ type: "output", text: "Graf TIDAK mengandung siklus ✗" });
+            setVisitedNodeIds(new Set());
+            setEdgeHighlights(new Set());
+          }
+          setIsBusy(false);
+          return;
+        }
+
+        if (payload.algorithm === "girth") {
+          appendLine({ type: "info", text: "Menghitung girth (siklus terkecil)..." });
+          const res = await getGirth({ directed: payload.directed, edges });
+          if (token !== runTokenRef.current) return;
+
+          if (res.girth === null) {
+            appendLine({ type: "output", text: "Girth = ∞ (tidak ada siklus dalam graf)" });
+          } else {
+            appendLine({ type: "output", text: `Girth = ${res.girth} (panjang siklus terkecil)` });
+          }
           setIsBusy(false);
           return;
         }
