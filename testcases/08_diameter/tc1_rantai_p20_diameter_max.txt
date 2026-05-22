@@ -1,14 +1,3 @@
-# Diameter Graf — Test Case 1: Rantai Linear P20 (20 node)
-# Algoritma : Diameter Graf
-# Graf      : Undirected
-#
-# Graf rantai (path graph) P20: 1-2-3-...-20
-# Ini adalah graf dengan diameter MAKSIMUM untuk jumlah node yang sama.
-#
-# Diameter = jarak terpanjang antar dua node
-#           = jarak dari node 1 ke node 20
-#           = 19 (melewati 19 edge)
-#
 1 2
 2 3
 3 4
@@ -28,7 +17,3 @@
 17 18
 18 19
 19 20
-#
-# Ekspektasi:
-# diameter     = 19
-# is_connected = true

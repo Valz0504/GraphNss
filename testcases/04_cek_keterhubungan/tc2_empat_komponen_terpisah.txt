@@ -1,34 +1,16 @@
-# Cek Keterhubungan — Test Case 2: Graf Tidak Terhubung (4 Komponen)
-# Algoritma : Cek Keterhubungan
-# Graf      : Undirected
-#
-# 4 komponen terpisah:
-#   α: 1-2-3-4-5       (rantai 5 node)
-#   β: 6-7-8-9-10      (rantai 5 node)
-#   γ: 11-12-13-14-15  (rantai 5 node)
-#   δ: 16-17-18-19-20  (rantai 5 node)
-#
-// Komponen α
 1 2
 2 3
 3 4
 4 5
-// Komponen β
 6 7
 7 8
 8 9
 9 10
-// Komponen γ
 11 12
 12 13
 13 14
 14 15
-// Komponen δ
 16 17
 17 18
 18 19
 19 20
-#
-# Ekspektasi:
-# is_connected = false
-# components   = 4 komponen, masing-masing berisi 5 node

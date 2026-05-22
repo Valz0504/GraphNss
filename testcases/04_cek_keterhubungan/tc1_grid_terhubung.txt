@@ -1,16 +1,3 @@
-# Cek Keterhubungan — Test Case 1: Graf Terhubung (Grid 4×5, 20 node)
-# Algoritma : Cek Keterhubungan
-# Graf      : Undirected
-#
-# Grid 4 baris × 5 kolom, 20 node, 31 edge.
-# Semua node terhubung → is_connected = true
-#
-# Baris 0 →  1  2  3  4  5
-# Baris 1 →  6  7  8  9 10
-# Baris 2 → 11 12 13 14 15
-# Baris 3 → 16 17 18 19 20
-#
-// Horizontal edges
 1 2
 2 3
 3 4
@@ -27,7 +14,6 @@
 17 18
 18 19
 19 20
-// Vertical edges
 1 6
 2 7
 3 8
@@ -43,7 +29,3 @@
 13 18
 14 19
 15 20
-#
-# Ekspektasi:
-# is_connected = true
-# components   = 1 (satu komponen berisi 20 node)

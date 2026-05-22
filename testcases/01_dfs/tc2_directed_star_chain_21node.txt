@@ -1,18 +1,3 @@
-# DFS — Test Case 2: Graf Bintang + Rantai (21 node)
-# Algoritma : DFS
-# Start Node: A
-# Graf      : Directed (aktifkan toggle Directed)
-#
-# Struktur:
-#   Hub utama A terhubung ke 5 cabang (B,C,D,E,F)
-#   Tiap cabang berlanjut ke rantai panjang:
-#     B → B1 → B2 → B3
-#     C → C1 → C2 → C3
-#     D → D1 → D2 → D3
-#     E → E1 → E2 → E3
-#     F → F1 → F2 → F3
-#   Total: 1 + 5 + 15 = 21 node
-#
 A B
 A C
 A D
@@ -33,8 +18,3 @@ E2 E3
 F F1
 F1 F2
 F2 F3
-#
-# Ekspektasi DFS dari A (directed):
-# DFS akan masuk ke satu cabang sedalam mungkin sebelum kembali.
-# Contoh: A → B → B1 → B2 → B3, lalu A → C → ...
-# Total 21 node dikunjungi.

@@ -1,15 +1,3 @@
-# DFS — Test Case 1: Grid 4×5 (20 node)
-# Algoritma : DFS
-# Start Node: 1
-# Graf      : Undirected
-#
-# Node 1-20 disusun sebagai grid 4 baris × 5 kolom:
-# Baris 0 →  1  2  3  4  5
-# Baris 1 →  6  7  8  9 10
-# Baris 2 → 11 12 13 14 15
-# Baris 3 → 16 17 18 19 20
-#
-# Edge horizontal (kiri-kanan per baris)
 1 2
 2 3
 3 4
@@ -26,7 +14,6 @@
 17 18
 18 19
 19 20
-# Edge vertikal (atas-bawah per kolom)
 1 6
 2 7
 3 8
@@ -42,7 +29,3 @@
 13 18
 14 19
 15 20
-#
-# Ekspektasi DFS dari node 1:
-# Urutan: 1 → 2 → 3 → 4 → 5 → 10 → 15 → 20 → 19 → 14 → ... (deep-first)
-# Total 20 node dikunjungi.

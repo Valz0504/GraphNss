@@ -1,18 +1,3 @@
-# Diameter Graf — Test Case 2: Grid 4×5 (20 node) — Diameter = 7
-# Algoritma : Diameter Graf
-# Graf      : Undirected
-#
-# Grid 4 baris × 5 kolom.
-# Node pojok ke pojok (misal: node 1 ke node 20) memiliki jarak Manhattan:
-#   |row_20 - row_1| + |col_20 - col_1| = (3-0) + (4-0) = 7
-# Inilah diameter graf ini.
-#
-# Baris 0 →  1  2  3  4  5
-# Baris 1 →  6  7  8  9 10
-# Baris 2 → 11 12 13 14 15
-# Baris 3 → 16 17 18 19 20
-#
-// Horizontal
 1 2
 2 3
 3 4
@@ -29,7 +14,6 @@
 17 18
 18 19
 19 20
-// Vertikal
 1 6
 2 7
 3 8
@@ -45,7 +29,3 @@
 13 18
 14 19
 15 20
-#
-# Ekspektasi:
-# diameter     = 7  (dari node 1 ke node 20)
-# is_connected = true

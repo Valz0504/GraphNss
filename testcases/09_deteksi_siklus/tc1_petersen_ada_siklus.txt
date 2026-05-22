@@ -1,29 +1,15 @@
-# Deteksi Siklus — Test Case 1: Graf Mengandung Siklus (Graf Petersen, 10 node)
-# Algoritma : Deteksi Siklus
-# Graf      : Undirected
-#
-# Graf Petersen memiliki banyak siklus.
-# Siklus terkecilnya panjang 5: misalnya 0-1-2-3-4-0 (outer pentagon).
-#
-// Outer pentagon
 0 1
 1 2
 2 3
 3 4
 4 0
-// Inner pentagram
 5 7
 7 9
 9 6
 6 8
 8 5
-// Spokes
 0 5
 1 6
 2 7
 3 8
 4 9
-#
-# Ekspektasi:
-# has_cycle    = true
-# example_cycle = contoh salah satu siklus (misal [0,1,2,3,4,0])

@@ -1,13 +1,3 @@
-# Komponen Terbesar — Test Case 1: Satu Komponen Jelas Lebih Besar (20 node)
-# Algoritma : Komponen Terbesar
-# Graf      : Undirected
-#
-# 3 komponen dengan ukuran sangat berbeda:
-#   Besar (12 node) : G1-G2-...-G12 dalam siklus
-#   Sedang (5 node) : M1-M2-M3-M4-M5 dalam rantai
-#   Kecil (3 node)  : S1-S2-S3 dalam segitiga
-#
-// Komponen BESAR: siklus 12 node (G1..G12)
 G1 G2
 G2 G3
 G3 G4
@@ -20,17 +10,10 @@ G9 G10
 G10 G11
 G11 G12
 G12 G1
-// Komponen SEDANG: rantai 5 node (M1..M5)
 M1 M2
 M2 M3
 M3 M4
 M4 M5
-// Komponen KECIL: segitiga 3 node (S1..S3)
 S1 S2
 S2 S3
 S3 S1
-#
-# Ekspektasi:
-# largest_component = {G1, G2, ..., G12}  (12 node)
-# size              = 12
-# total_components  = 3
