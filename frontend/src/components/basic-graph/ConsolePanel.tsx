@@ -36,6 +36,7 @@ function TrafficLights({ onClose }: { onClose: () => void }) {
 export default function ConsolePanel({ lines }: ConsolePanelProps) {
   const [height, setHeight]   = useState(DEFAULT_HEIGHT);
   const [isOpen, setIsOpen]   = useState(true);
+  const [dragging, setDragging] = useState(false);
   const bottomRef             = useRef<HTMLDivElement | null>(null);
 
   const prevHeight    = useRef(DEFAULT_HEIGHT);
@@ -47,6 +48,7 @@ export default function ConsolePanel({ lines }: ConsolePanelProps) {
   const onDragHandleMouseDown = (e: React.MouseEvent) => {
     if (!isOpen) return;
     isDragging.current  = true;
+    setDragging(true);
     dragStartY.current  = e.clientY;
     dragStartH.current  = height;
     e.preventDefault(); // prevent text selection
@@ -60,7 +62,11 @@ export default function ConsolePanel({ lines }: ConsolePanelProps) {
       const newH   = Math.max(80, Math.min(MAX_HEIGHT, dragStartH.current + delta));
       setHeight(newH);
     };
-    const onMouseUp = () => { isDragging.current = false; };
+    const onMouseUp = () => {
+      if (!isDragging.current) return;
+      isDragging.current = false;
+      setDragging(false);
+    };
 
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup",   onMouseUp);
@@ -103,7 +109,7 @@ export default function ConsolePanel({ lines }: ConsolePanelProps) {
         display:     "flex",
         flexDirection: "column",
         overflow:    "hidden",
-        transition:  isDragging.current ? "none" : "height 0.2s cubic-bezier(0.4,0,0.2,1)",
+        transition:  dragging ? "none" : "height 0.2s cubic-bezier(0.4,0,0.2,1)",
       }}
     >
       {/* ── Drag handle + Header bar ── */}
