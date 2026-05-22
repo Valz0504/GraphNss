@@ -1,0 +1,39 @@
+# Cari Komponen — Test Case 2: Directed Graph, 4 Komponen Lemah (20 node)
+# Algoritma : Cari Komponen
+# Graf      : Directed (aktifkan toggle Directed)
+#
+# Komponen lemah (weak) — arah edge diabaikan untuk menentukan komponen:
+#   W1: 5 node dalam pola "pohon" directed
+#       1→2, 1→3, 2→4, 3→5
+#   W2: 5 node dalam siklus directed
+#       6→7→8→9→10→6
+#   W3: 5 node dalam rantai directed
+#       11→12→13→14→15
+#   W4: 5 node dalam bintang balik
+#       20→16, 20→17, 20→18, 20→19
+#
+// Komponen W1 (pohon directed, 5 node)
+1 2
+1 3
+2 4
+3 5
+// Komponen W2 (siklus directed, 5 node)
+6 7
+7 8
+8 9
+9 10
+10 6
+// Komponen W3 (rantai directed, 5 node)
+11 12
+12 13
+13 14
+14 15
+// Komponen W4 (bintang balik directed, 5 node)
+20 16
+20 17
+20 18
+20 19
+#
+# Ekspektasi (mode = weak):
+# components = 4
+# Masing-masing komponen berisi 5 node.

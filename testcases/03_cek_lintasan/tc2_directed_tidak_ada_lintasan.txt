@@ -1,0 +1,38 @@
+# Cek Lintasan — Test Case 2: Graf Terputus (Lintasan Tidak Ada)
+# Algoritma : Cek Lintasan
+# Node A    : 1
+# Node B    : 11
+# Graf      : Directed (aktifkan toggle Directed)
+#
+# Dua komponen terpisah (directed):
+#   Komponen α: 1→2→3→4→5→6→7→8→9→10
+#   Komponen β: 11→12→13→14→15→16→17→18→19→20
+# Tidak ada edge yang menghubungkan α dan β.
+#
+# Dari node 1 ke node 11 → TIDAK ADA LINTASAN.
+# Dari node 11 ke node 1 → TIDAK ADA LINTASAN.
+#
+// Komponen α (directed chain)
+1 2
+2 3
+3 4
+4 5
+5 6
+6 7
+7 8
+8 9
+9 10
+// Komponen β (directed chain)
+11 12
+12 13
+13 14
+14 15
+15 16
+16 17
+17 18
+18 19
+19 20
+#
+# Ekspektasi:
+# exists = false
+# path   = null

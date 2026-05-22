@@ -1,0 +1,49 @@
+# Deteksi Siklus — Test Case 3 (BONUS): Directed DAG (20 node) — TIDAK Ada Siklus
+# Algoritma : Deteksi Siklus
+# Graf      : Directed (aktifkan toggle Directed)
+#
+# Directed Acyclic Graph (DAG) — tidak ada siklus directed.
+# Struktur: lapisan-lapisan dari kiri ke kanan (topological levels)
+#
+#   Layer 0: 1, 2
+#   Layer 1: 3, 4, 5
+#   Layer 2: 6, 7, 8, 9
+#   Layer 3: 10, 11, 12, 13, 14
+#   Layer 4: 15, 16, 17, 18, 19, 20
+#
+// Layer 0 → Layer 1
+1 3
+1 4
+2 4
+2 5
+// Layer 1 → Layer 2
+3 6
+3 7
+4 7
+4 8
+5 8
+5 9
+// Layer 2 → Layer 3
+6 10
+7 11
+7 12
+8 12
+8 13
+9 13
+9 14
+// Layer 3 → Layer 4
+10 15
+11 15
+11 16
+12 16
+12 17
+13 17
+13 18
+14 18
+14 19
+14 20
+#
+# Ekspektasi:
+# has_cycle    = false
+# example_cycle = []
+# (Semua edge menuju ke layer lebih tinggi → tidak mungkin ada siklus)

@@ -1,0 +1,37 @@
+# Cek Bipartite — Test Case 2: Graf Petersen (10 node) — BUKAN Bipartite
+# Algoritma : Cek Bipartite
+# Graf      : Undirected
+#
+# Graf Petersen adalah graf terkenal yang:
+#   - Memiliki 10 node dan 15 edge
+#   - Girth = 5 (siklus terkecil panjang 5 = siklus GANJIL)
+#   - Tidak bisa diwarnai dengan 2 warna → BUKAN BIPARTITE
+#
+# Struktur:
+#   Outer pentagon : 0-1-2-3-4-0
+#   Inner pentagram: 5-7-9-6-8-5
+#   Spoke (jari)   : 0-5, 1-6, 2-7, 3-8, 4-9
+#
+// Outer pentagon
+0 1
+1 2
+2 3
+3 4
+4 0
+// Inner pentagram
+5 7
+7 9
+9 6
+6 8
+8 5
+// Spokes
+0 5
+1 6
+2 7
+3 8
+4 9
+#
+# Ekspektasi:
+# is_bipartite = false
+# (karena mengandung siklus panjang ganjil: 0-1-6-9-7-2-0 panjang 6? No.)
+# Sebenarnya: 0-1-6-8-5-0 panjang 5 = siklus ganjil → bukan bipartite

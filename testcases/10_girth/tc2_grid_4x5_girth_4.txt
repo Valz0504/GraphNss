@@ -1,0 +1,51 @@
+# Girth — Test Case 2: Grid 4×5 (20 node) — Girth = 4
+# Algoritma : Girth
+# Graf      : Undirected
+#
+# Grid memiliki banyak "kotak" persegi kecil 1×1.
+# Setiap kotak = siklus berukuran 4 (empat node).
+# Contoh siklus terkecil: 1-2-7-6-1
+# Tidak ada segitiga (siklus berukuran 3) dalam grid.
+#
+# Baris 0 →  1  2  3  4  5
+# Baris 1 →  6  7  8  9 10
+# Baris 2 → 11 12 13 14 15
+# Baris 3 → 16 17 18 19 20
+#
+// Horizontal
+1 2
+2 3
+3 4
+4 5
+6 7
+7 8
+8 9
+9 10
+11 12
+12 13
+13 14
+14 15
+16 17
+17 18
+18 19
+19 20
+// Vertikal
+1 6
+2 7
+3 8
+4 9
+5 10
+6 11
+7 12
+8 13
+9 14
+10 15
+11 16
+12 17
+13 18
+14 19
+15 20
+#
+# Ekspektasi:
+# girth = 4
+# (siklus 4: misalnya 1-2-7-6-1)

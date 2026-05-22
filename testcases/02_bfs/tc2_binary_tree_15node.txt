@@ -1,0 +1,38 @@
+# BFS — Test Case 2: Complete Binary Tree 15 Node
+# Algoritma : BFS
+# Start Node: 1
+# Graf      : Undirected
+#
+# Binary tree lengkap dengan 15 node, kedalaman 3:
+#         1
+#       /   \
+#      2     3
+#    /  \   /  \
+#   4    5 6    7
+#  / \ / \ / \ / \
+# 8  9 10 11 12 13 14 15
+#
+# BFS dari root (1) mengunjungi level-by-level:
+#   Level 0: {1}
+#   Level 1: {2, 3}
+#   Level 2: {4, 5, 6, 7}
+#   Level 3: {8, 9, 10, 11, 12, 13, 14, 15}
+#
+1 2
+1 3
+2 4
+2 5
+3 6
+3 7
+4 8
+4 9
+5 10
+5 11
+6 12
+6 13
+7 14
+7 15
+#
+# Ekspektasi BFS dari node 1:
+# 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+# Total 15 node dikunjungi, tree_edges = 14 (spanning tree).

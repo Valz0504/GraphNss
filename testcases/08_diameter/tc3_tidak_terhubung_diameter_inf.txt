@@ -1,0 +1,34 @@
+# Diameter Graf — Test Case 3 (BONUS): Graf Tidak Terhubung → Diameter = ∞
+# Algoritma : Diameter Graf
+# Graf      : Undirected
+#
+# Dua komponen terpisah → diameter tidak terdefinisi (= ∞)
+# karena tidak ada path dari komponen 1 ke komponen 2.
+#
+# Komponen P (10 node): rantai p1-p2-...-p10
+# Komponen Q (10 node): bintang hub=q1, daun q2..q10
+#
+// Komponen P: rantai 10 node
+p1 p2
+p2 p3
+p3 p4
+p4 p5
+p5 p6
+p6 p7
+p7 p8
+p8 p9
+p9 p10
+// Komponen Q: bintang 10 node (hub = q1)
+q1 q2
+q1 q3
+q1 q4
+q1 q5
+q1 q6
+q1 q7
+q1 q8
+q1 q9
+q1 q10
+#
+# Ekspektasi:
+# diameter     = null  (tidak terhubung → ∞)
+# is_connected = false

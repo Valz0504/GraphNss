@@ -1,0 +1,33 @@
+# Cari Komponen — Test Case 1: 3 Komponen Ukuran Berbeda (18 node)
+# Algoritma : Cari Komponen
+# Graf      : Undirected
+#
+# Komponen besar (8 node) — siklus oktagon: A1-A2-A3-A4-A5-A6-A7-A8-A1
+# Komponen sedang (6 node) — bintang: B1 di tengah ke B2,B3,B4,B5,B6
+# Komponen kecil (4 node) — rantai: C1-C2-C3-C4
+#
+// Komponen A (siklus 8 node)
+A1 A2
+A2 A3
+A3 A4
+A4 A5
+A5 A6
+A6 A7
+A7 A8
+A8 A1
+// Komponen B (bintang 6 node, hub=B1)
+B1 B2
+B1 B3
+B1 B4
+B1 B5
+B1 B6
+// Komponen C (rantai 4 node)
+C1 C2
+C2 C3
+C3 C4
+#
+# Ekspektasi:
+# components = 3
+#   1. {A1, A2, A3, A4, A5, A6, A7, A8}  (8 node)
+#   2. {B1, B2, B3, B4, B5, B6}          (6 node)
+#   3. {C1, C2, C3, C4}                  (4 node)

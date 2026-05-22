@@ -1,0 +1,33 @@
+# Cek Lintasan — Test Case 1: Rantai 20 Node (Lintasan Ada)
+# Algoritma : Cek Lintasan
+# Node A    : 1
+# Node B    : 20
+# Graf      : Undirected
+#
+# Graf rantai linear: 1-2-3-4-...-20
+# Lintasan dari 1 ke 20 PASTI ADA (melalui semua node).
+# Panjang lintasan terpendek = 19 edge.
+#
+1 2
+2 3
+3 4
+4 5
+5 6
+6 7
+7 8
+8 9
+9 10
+10 11
+11 12
+12 13
+13 14
+14 15
+15 16
+16 17
+17 18
+18 19
+19 20
+#
+# Ekspektasi:
+# exists = true
+# path   = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]

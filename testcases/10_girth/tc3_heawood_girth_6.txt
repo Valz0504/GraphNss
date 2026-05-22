@@ -1,0 +1,32 @@
+# Girth — Test Case 3 (BONUS): Graf Heawood (14 node) — Girth = 6
+# Algoritma : Girth
+# Graf      : Undirected
+#
+# Graf Heawood: graf bipartite kecil dengan girth = 6
+# 14 node, 21 edge, setiap node degree = 3
+# Siklus terkecil panjang 6 (hexagon) — tidak ada triangle atau kotak.
+#
+0 1
+0 5
+0 13
+1 2
+1 10
+2 3
+2 7
+3 4
+3 12
+4 5
+4 9
+5 6
+6 7
+6 11
+7 8
+8 9
+8 13
+9 10
+10 11
+11 12
+12 13
+#
+# Ekspektasi:
+# girth = 6
