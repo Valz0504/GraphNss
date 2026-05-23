@@ -137,6 +137,7 @@ export default function BasicGraphShell() {
   const [isBusy, setIsBusy] = useState(false);
   const timersRef = useRef<number[]>([]);
   const runTokenRef = useRef(0);
+  const pendingLayoutRef = useRef<Record<string, { x: number; y: number }> | null>(null);
 
   const appendLine = useCallback((line: ConsoleLine) => {
     setLines((prev) => [...prev, line]);
@@ -169,9 +170,13 @@ export default function BasicGraphShell() {
         return { ok: false as const };
       }
 
+      const customLayout = pendingLayoutRef.current;
+      pendingLayoutRef.current = null;
+
       setGraph((prev) => {
-        const nextNodes = computeInitialLayout(parsed.nodes, prev?.nodes);
+        const nextNodes = computeInitialLayout(parsed.nodes, prev?.nodes, customLayout);
         const nextEdges = buildEdgeModels(parsed.edges, payload.directed);
+
         return {
           directed: payload.directed,
           weighted: payload.weighted,
@@ -225,6 +230,28 @@ export default function BasicGraphShell() {
     setEdgeHighlights(new Set());
   }, [clearTimers]);
 
+
+  // ── Handler for custom generated graphs ───────────────────────────────────
+  const handleGenerateDefaultGraph = useCallback(
+    (payload: {
+      edgeList: string;
+      positions: Record<string, { x: number; y: number }>;
+      isDirected: boolean;
+      isWeighted: boolean;
+    }) => {
+      runTokenRef.current += 1;
+      clearTimers();
+      resetHighlights();
+      setIsBusy(false);
+
+      // Store the specific positions to be consumed by the next graph parse
+      pendingLayoutRef.current = payload.positions;
+      setIsDirected(payload.isDirected);
+      setIsWeighted(payload.isWeighted);
+      setGraphInput(payload.edgeList);
+    },
+    [clearTimers, resetHighlights]
+  );
 
   const animateNodeSequence = useCallback(
     (
@@ -722,6 +749,7 @@ export default function BasicGraphShell() {
           onWeightedChange={setIsWeighted}
           onSimulate={handleSimulate}
           onResetAll={handleResetAll}
+          onGenerateDefaultGraph={handleGenerateDefaultGraph}
         />
       </div>
 
@@ -756,6 +784,7 @@ export default function BasicGraphShell() {
               onWeightedChange={setIsWeighted}
               onSimulate={handleSimulate}
               onResetAll={handleResetAll}
+              onGenerateDefaultGraph={handleGenerateDefaultGraph}
             />
           </aside>
         </>
