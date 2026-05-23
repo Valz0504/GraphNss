@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { checkBipartite, checkConnectivity, checkPath, detectCycle, findComponents, getDiameter, getGirth, getLargestComponent, simulateBfs, simulateDfs } from "@/lib/graphApi";
+import { checkBipartite, checkConnectivity, checkPath, detectCycle, findComponents, getDiameter, getGirth, getLargestComponent, runDijkstra, runKruskal, runPrim, simulateBfs, simulateDfs } from "@/lib/graphApi";
 import ControlSidebar from "./ControlSidebar";
 import ConsolePanel from "./ConsolePanel";
 import GraphCanvas from "./GraphCanvas";
@@ -120,6 +120,11 @@ function CanvasArea({
 export default function BasicGraphShell() {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  // ── Graph input state (lifted from ControlSidebar) ──────────────────────
+  const [graphInput, setGraphInput] = useState("");
+  const [isDirected, setIsDirected] = useState(false);
+  const [isWeighted, setIsWeighted] = useState(false);
+
   const [graph, setGraph] = useState<GraphModel | null>(null);
   const [lines, setLines] = useState<ConsoleLine[]>(INITIAL_LINES);
 
@@ -152,16 +157,15 @@ export default function BasicGraphShell() {
   }, [clearTimers]);
 
   const setGraphFromInput = useCallback(
-    (payload: { graphInput: string; directed: boolean; weighted: boolean }) => {
+    (payload: { graphInput: string; directed: boolean; weighted: boolean }, silent = false) => {
       const parsed = parseEdgeList(payload.graphInput);
       if (parsed.errors.length > 0) {
-        parsed.errors.forEach((msg) => appendLine({ type: "error", text: msg }));
+        if (!silent) parsed.errors.forEach((msg) => appendLine({ type: "error", text: msg }));
         return { ok: false as const };
       }
 
       if (parsed.nodes.length === 0) {
         setGraph(null);
-        appendLine({ type: "error", text: "Graf kosong — masukkan minimal 1 edge." });
         return { ok: false as const };
       }
 
@@ -176,15 +180,24 @@ export default function BasicGraphShell() {
         };
       });
 
-      appendLine({
-        type: "output",
-        text: `Graf ditampilkan: ${parsed.nodes.length} node, ${parsed.edges.length} edge.`,
-      });
-
       return { ok: true as const, edges: parsed.edges };
     },
     [appendLine]
   );
+
+  // ── Auto-render graph as user types (debounced 350ms) ───────────────────
+  useEffect(() => {
+    if (!graphInput.trim()) {
+      setGraph(null);
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      resetHighlights();
+      setGraphFromInput({ graphInput, directed: isDirected, weighted: isWeighted }, true);
+    }, 350);
+    return () => window.clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graphInput, isDirected, isWeighted]);
 
   const onMoveNode = useCallback((id: string, pos: { x: number; y: number }) => {
     setGraph((prev) => {
@@ -201,6 +214,9 @@ export default function BasicGraphShell() {
     clearTimers();
     setIsBusy(false);
     setGraph(null);
+    setGraphInput("");
+    setIsDirected(false);
+    setIsWeighted(false);
     setLines(INITIAL_LINES);
     setActiveNodeId(null);
     setActiveEdgeKey(null);
@@ -209,14 +225,6 @@ export default function BasicGraphShell() {
     setEdgeHighlights(new Set());
   }, [clearTimers]);
 
-  const handleVisualise = useCallback(
-    (payload: { graphInput: string; directed: boolean; weighted: boolean }) => {
-      runTokenRef.current += 1;
-      resetHighlights();
-      setGraphFromInput(payload);
-    },
-    [resetHighlights, setGraphFromInput]
-  );
 
   const animateNodeSequence = useCallback(
     (
@@ -264,9 +272,6 @@ export default function BasicGraphShell() {
 
   const handleSimulate = useCallback(
     async (payload: {
-      graphInput: string;
-      directed: boolean;
-      weighted: boolean;
       algorithm: AlgorithmId;
       startNode?: string;
       nodeA?: string;
@@ -278,9 +283,9 @@ export default function BasicGraphShell() {
       setIsBusy(true);
 
       const graphRes = setGraphFromInput({
-        graphInput: payload.graphInput,
-        directed: payload.directed,
-        weighted: payload.weighted,
+        graphInput,
+        directed: isDirected,
+        weighted: isWeighted,
       });
 
       if (!graphRes.ok) {
@@ -305,8 +310,8 @@ export default function BasicGraphShell() {
           });
 
           const res = payload.algorithm === "dfs"
-            ? await simulateDfs({ directed: payload.directed, edges, start })
-            : await simulateBfs({ directed: payload.directed, edges, start });
+            ? await simulateDfs({ directed: isDirected, edges, start })
+            : await simulateBfs({ directed: isDirected, edges, start });
 
           if (token !== runTokenRef.current) return;
 
@@ -317,7 +322,7 @@ export default function BasicGraphShell() {
 
           setPathNodeIds(new Set());
           setEdgeHighlights(
-            new Set(res.tree_edges.map((e) => edgeKey(e.u, e.v, payload.directed)))
+            new Set(res.tree_edges.map((e) => edgeKey(e.u, e.v, isDirected)))
           );
 
           const parentByNode = new Map<string, string>();
@@ -325,7 +330,7 @@ export default function BasicGraphShell() {
 
           animateNodeSequence(res.visited_order, token, {
             labelPrefix: res.algorithm.toUpperCase(),
-            directed: payload.directed,
+            directed: isDirected,
             parentByNode,
           });
 
@@ -347,7 +352,7 @@ export default function BasicGraphShell() {
           });
 
           const res = await checkPath({
-            directed: payload.directed,
+            directed: isDirected,
             edges,
             source,
             target,
@@ -373,7 +378,7 @@ export default function BasicGraphShell() {
 
           const pathEdgeKeys = new Set<string>();
           for (let i = 0; i < path.length - 1; i++) {
-            pathEdgeKeys.add(edgeKey(path[i]!, path[i + 1]!, payload.directed));
+            pathEdgeKeys.add(edgeKey(path[i]!, path[i + 1]!, isDirected));
           }
           setEdgeHighlights(pathEdgeKeys);
 
@@ -387,7 +392,7 @@ export default function BasicGraphShell() {
                 setActiveEdgeKey(null);
               } else {
                 const prev = path[idx - 1]!;
-                setActiveEdgeKey(edgeKey(prev, nodeId, payload.directed));
+                setActiveEdgeKey(edgeKey(prev, nodeId, isDirected));
               }
             }, idx * stepMs);
             timersRef.current.push(t);
@@ -406,7 +411,7 @@ export default function BasicGraphShell() {
 
         if (payload.algorithm === "cek-keterhubungan") {
           appendLine({ type: "info", text: "Mengecek keterhubungan graf..." });
-          const res = await checkConnectivity({ directed: payload.directed, edges });
+          const res = await checkConnectivity({ directed: isDirected, edges });
           if (token !== runTokenRef.current) return;
 
           const modeNote = res.mode === "weak" ? " (weak — abaikan arah edge)" : "";
@@ -423,7 +428,7 @@ export default function BasicGraphShell() {
 
         if (payload.algorithm === "cari-komponen") {
           appendLine({ type: "info", text: "Mencari komponen terhubung..." });
-          const res = await findComponents({ directed: payload.directed, edges });
+          const res = await findComponents({ directed: isDirected, edges });
           if (token !== runTokenRef.current) return;
 
           const modeNote = res.mode === "weak" ? " (weak — abaikan arah edge)" : "";
@@ -442,7 +447,7 @@ export default function BasicGraphShell() {
 
         if (payload.algorithm === "komponen-terbesar") {
           appendLine({ type: "info", text: "Mencari komponen terbesar..." });
-          const res = await getLargestComponent({ directed: payload.directed, edges });
+          const res = await getLargestComponent({ directed: isDirected, edges });
           if (token !== runTokenRef.current) return;
 
           const modeNote = res.mode === "weak" ? " (weak)" : "";
@@ -465,7 +470,7 @@ export default function BasicGraphShell() {
 
         if (payload.algorithm === "cek-bipartite") {
           appendLine({ type: "info", text: "Mengecek apakah graf bipartite..." });
-          const res = await checkBipartite({ directed: payload.directed, edges });
+          const res = await checkBipartite({ directed: isDirected, edges });
           if (token !== runTokenRef.current) return;
 
           if (res.is_bipartite) {
@@ -488,7 +493,7 @@ export default function BasicGraphShell() {
 
         if (payload.algorithm === "diameter") {
           appendLine({ type: "info", text: "Menghitung diameter graf..." });
-          const res = await getDiameter({ directed: payload.directed, edges });
+          const res = await getDiameter({ directed: isDirected, edges });
           if (token !== runTokenRef.current) return;
 
           if (!res.is_connected) {
@@ -507,7 +512,7 @@ export default function BasicGraphShell() {
 
         if (payload.algorithm === "deteksi-siklus") {
           appendLine({ type: "info", text: "Mendeteksi siklus dalam graf..." });
-          const res = await detectCycle({ directed: payload.directed, edges });
+          const res = await detectCycle({ directed: isDirected, edges });
           if (token !== runTokenRef.current) return;
 
           if (res.has_cycle) {
@@ -525,7 +530,7 @@ export default function BasicGraphShell() {
               for (let i = 0; i < res.example_cycle.length - 1; i++) {
                 const u = res.example_cycle[i]!;
                 const v = res.example_cycle[i + 1]!;
-                cycleEdgeKeys.add(edgeKey(u, v, payload.directed));
+                cycleEdgeKeys.add(edgeKey(u, v, isDirected));
               }
               setEdgeHighlights(cycleEdgeKeys);
               setPathNodeIds(new Set());
@@ -541,7 +546,7 @@ export default function BasicGraphShell() {
 
         if (payload.algorithm === "girth") {
           appendLine({ type: "info", text: "Menghitung girth (siklus terkecil)..." });
-          const res = await getGirth({ directed: payload.directed, edges });
+          const res = await getGirth({ directed: isDirected, edges });
           if (token !== runTokenRef.current) return;
 
           if (res.girth === null) {
@@ -550,6 +555,118 @@ export default function BasicGraphShell() {
             appendLine({ type: "output", text: `Girth = ${res.girth} (panjang siklus terkecil)` });
           }
           setIsBusy(false);
+          return;
+        }
+
+        if (payload.algorithm === "dijkstra") {
+          const source = (payload.nodeA ?? "").trim();
+          const target = (payload.nodeB ?? "").trim();
+          if (!source || !target) {
+            appendLine({ type: "error", text: "Source dan Target wajib diisi untuk Dijkstra." });
+            setIsBusy(false);
+            return;
+          }
+
+          appendLine({
+            type: "info",
+            text: `Dijkstra: mencari jalur terpendek dari ${source} → ${target}...`,
+          });
+
+          const res = await runDijkstra({ directed: isDirected, edges, source, target });
+          if (token !== runTokenRef.current) return;
+
+          if (!res.exists || res.path.length === 0) {
+            appendLine({ type: "output", text: "Tidak ada jalur yang dapat dicapai." });
+            setEdgeHighlights(new Set());
+            setPathNodeIds(new Set());
+            setIsBusy(false);
+            return;
+          }
+
+          const cost = res.cost !== null ? res.cost : "?";
+          appendLine({ type: "output", text: `Jalur terpendek: ${res.path.join(" → ")}` });
+          appendLine({ type: "output", text: `Total bobot: ${cost}` });
+
+          setPathNodeIds(new Set(res.path));
+          setVisitedNodeIds(new Set());
+
+          const pathEdgeKeys = new Set<string>();
+          for (let i = 0; i < res.path.length - 1; i++) {
+            pathEdgeKeys.add(edgeKey(res.path[i]!, res.path[i + 1]!, isDirected));
+          }
+          setEdgeHighlights(pathEdgeKeys);
+
+          // Animate walking the path
+          const stepMs = 520;
+          res.path.forEach((nodeId: string, idx: number) => {
+            const t = window.setTimeout(() => {
+              if (token !== runTokenRef.current) return;
+              setActiveNodeId(nodeId);
+              setActiveEdgeKey(
+                idx === 0 ? null : edgeKey(res.path[idx - 1]!, nodeId, isDirected)
+              );
+            }, idx * stepMs);
+            timersRef.current.push(t);
+          });
+
+          const done = window.setTimeout(() => {
+            if (token !== runTokenRef.current) return;
+            setActiveNodeId(null);
+            setActiveEdgeKey(null);
+            setIsBusy(false);
+            appendLine({ type: "info", text: "Simulasi selesai." });
+          }, res.path.length * stepMs + 20);
+          timersRef.current.push(done);
+          return;
+        }
+
+        if (payload.algorithm === "prim" || payload.algorithm === "kruskal") {
+          const algoName = payload.algorithm === "prim" ? "Prim" : "Kruskal";
+          appendLine({
+            type: "info",
+            text: `MST ${algoName}: menghitung pohon pembangun minimal...`,
+          });
+
+          const res = payload.algorithm === "prim"
+            ? await runPrim({ directed: isDirected, edges })
+            : await runKruskal({ directed: isDirected, edges });
+          if (token !== runTokenRef.current) return;
+
+          if (res.mst_edges.length === 0) {
+            appendLine({ type: "output", text: "Graf kosong — tidak dapat membentuk MST." });
+            setIsBusy(false);
+            return;
+          }
+
+          if (!res.is_spanning) {
+            appendLine({
+              type: "output",
+              text: `MST ${algoName}: graf tidak terhubung — MST hanya mencakup satu komponen.`,
+            });
+          }
+
+          appendLine({
+            type: "output",
+            text: `MST ${algoName}: ${res.mst_edges.length} edge, total bobot = ${res.total_weight}`,
+          });
+          res.mst_edges.forEach((e: { u: string; v: string; w: number | null }) => {
+            const wLabel = e.w !== null ? ` (w=${e.w})` : "";
+            appendLine({ type: "output", text: `  ${e.u} — ${e.v}${wLabel}` });
+          });
+
+          // Highlight MST edges
+          const mstKeys = new Set<string>();
+          res.mst_edges.forEach((e: { u: string; v: string; w: number | null }) => mstKeys.add(edgeKey(e.u, e.v, false)));
+          setEdgeHighlights(mstKeys);
+
+          // Highlight MST nodes
+          const mstNodes = new Set<string>();
+          res.mst_edges.forEach((e: { u: string; v: string; w: number | null }) => { mstNodes.add(e.u); mstNodes.add(e.v); });
+          setPathNodeIds(mstNodes);
+          setVisitedNodeIds(new Set());
+
+          setIsBusy(false);
+          appendLine({ type: "info", text: "Simulasi selesai." });
           return;
         }
       } catch (err) {
@@ -565,6 +682,9 @@ export default function BasicGraphShell() {
       animateNodeSequence,
       appendLine,
       clearTimers,
+      graphInput,
+      isDirected,
+      isWeighted,
       resetHighlights,
       setGraphFromInput,
     ]
@@ -594,7 +714,12 @@ export default function BasicGraphShell() {
       <div className="hidden lg:flex">
         <ControlSidebar
           isBusy={isBusy}
-          onVisualise={handleVisualise}
+          graphInput={graphInput}
+          onGraphInputChange={setGraphInput}
+          isDirected={isDirected}
+          onDirectedChange={setIsDirected}
+          isWeighted={isWeighted}
+          onWeightedChange={setIsWeighted}
           onSimulate={handleSimulate}
           onResetAll={handleResetAll}
         />
@@ -623,7 +748,12 @@ export default function BasicGraphShell() {
             <ControlSidebar
               onClose={() => setDrawerOpen(false)}
               isBusy={isBusy}
-              onVisualise={handleVisualise}
+              graphInput={graphInput}
+              onGraphInputChange={setGraphInput}
+              isDirected={isDirected}
+              onDirectedChange={setIsDirected}
+              isWeighted={isWeighted}
+              onWeightedChange={setIsWeighted}
               onSimulate={handleSimulate}
               onResetAll={handleResetAll}
             />
