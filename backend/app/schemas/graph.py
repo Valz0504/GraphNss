@@ -90,3 +90,32 @@ class GirthResponse(BaseModel):
     directed: bool
     # None means no cycle exists (girth = infinity)
     girth: int | None
+
+
+# ── Weighted / MST schemas ────────────────────────────────────────────────────
+
+class ShortestPathRequest(GraphRequest):
+    source: str = Field(..., min_length=1, description="Start node for Dijkstra")
+    target: str = Field(..., min_length=1, description="Target node for Dijkstra")
+
+
+class ShortestPathResponse(BaseModel):
+    directed: bool
+    source: str
+    target: str
+    exists: bool
+    # Ordered list of node IDs forming the shortest path (empty if no path)
+    path: list[str] = Field(default_factory=list)
+    # Total cost of the path (None when no path exists)
+    cost: float | None
+
+
+class MSTResponse(BaseModel):
+    # Edges that form the minimum spanning tree
+    mst_edges: list[GraphEdge] = Field(default_factory=list)
+    # Sum of weights of MST edges
+    total_weight: float
+    # Number of nodes in the MST
+    node_count: int
+    # True only when the MST spans all nodes (graph is connected)
+    is_spanning: bool
