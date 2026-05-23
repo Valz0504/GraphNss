@@ -8,7 +8,10 @@ export type AlgorithmId =
   | "cek-bipartite"
   | "diameter"
   | "deteksi-siklus"
-  | "girth";
+  | "girth"
+  | "dijkstra"
+  | "prim"
+  | "kruskal";
 
 export interface GraphEdgeInput {
   u: string;
