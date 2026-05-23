@@ -56,7 +56,8 @@ const VIEWBOX = { w: 1000, h: 600 };
 
 export function computeInitialLayout(
   nodeIds: string[],
-  prevNodes?: GraphNodeModel[]
+  prevNodes?: GraphNodeModel[],
+  customLayout?: Record<string, { x: number; y: number }> | null
 ): GraphNodeModel[] {
   const prev = new Map<string, GraphNodeModel>();
   prevNodes?.forEach((n) => prev.set(n.id, n));
@@ -69,6 +70,10 @@ export function computeInitialLayout(
   const R = Math.max(140, Math.min(240, 60 + n * 14));
 
   return sorted.map((id, i) => {
+    if (customLayout?.[id]) {
+      return { id, x: customLayout[id]!.x, y: customLayout[id]!.y };
+    }
+
     const existing = prev.get(id);
     if (existing) return existing;
 
