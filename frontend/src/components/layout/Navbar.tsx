@@ -20,7 +20,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className="glass fixed inset-x-0 top-0 z-50 flex items-center px-4 md:px-6"
+        className="glass relative shrink-0 z-50 flex items-center px-4 md:px-6"
         style={{ height: "var(--navbar-h)", borderBottom: "1px solid var(--border)" }}
       >
         {/* ── Logo ── */}

@@ -10,20 +10,26 @@ from app.schemas.graph import (
     GraphEdge,
     GraphRequest,
     LargestComponentResponse,
+    MSTResponse,
     PathRequest,
     PathResponse,
+    ShortestPathRequest,
+    ShortestPathResponse,
     TraversalRequest,
     TraversalResponse,
 )
 from app.services.graph_algorithms import (
     bfs_simulate,
     dfs_simulate,
+    dijkstra,
     find_girth,
     find_path,
     graph_diameter,
     has_cycle,
     is_bipartite,
+    kruskal_mst,
     largest_component,
+    prim_mst,
     weakly_connected_components,
 )
 
@@ -166,4 +172,56 @@ async def get_girth(req: GraphRequest):
     return GirthResponse(
         directed=req.directed,
         girth=girth,
+    )
+
+
+# ── Weighted / MST endpoints ──────────────────────────────────────────────
+
+
+@router.post("/dijkstra", response_model=ShortestPathResponse)
+async def run_dijkstra(req: ShortestPathRequest):
+    """Shortest weighted path from source to target using Dijkstra's algorithm."""
+    try:
+        exists, path, cost = dijkstra(
+            req.edges,
+            directed=req.directed,
+            source=req.source,
+            target=req.target,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+
+    return ShortestPathResponse(
+        directed=req.directed,
+        source=req.source,
+        target=req.target,
+        exists=exists,
+        path=path,
+        cost=cost,
+    )
+
+
+@router.post("/prim", response_model=MSTResponse)
+async def run_prim(req: GraphRequest):
+    """Compute a Minimum Spanning Tree using Prim's algorithm."""
+    mst_edges, total_weight, node_count, is_spanning = prim_mst(req.edges)
+
+    return MSTResponse(
+        mst_edges=mst_edges,
+        total_weight=total_weight,
+        node_count=node_count,
+        is_spanning=is_spanning,
+    )
+
+
+@router.post("/kruskal", response_model=MSTResponse)
+async def run_kruskal(req: GraphRequest):
+    """Compute a Minimum Spanning Tree using Kruskal's algorithm."""
+    mst_edges, total_weight, node_count, is_spanning = kruskal_mst(req.edges)
+
+    return MSTResponse(
+        mst_edges=mst_edges,
+        total_weight=total_weight,
+        node_count=node_count,
+        is_spanning=is_spanning,
     )

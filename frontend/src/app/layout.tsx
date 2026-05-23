@@ -40,22 +40,15 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="overflow-hidden"
+        className="flex flex-col h-screen overflow-hidden"
         style={{ fontFamily: "var(--font-inter, Inter, sans-serif)" }}
       >
-        {/* Fixed top navbar */}
         <Navbar />
 
-        {/* Page content pushed below navbar */}
-        <div
-          className="overflow-hidden"
-          style={{
-            marginTop: "var(--navbar-h)",
-            height: "calc(100vh - var(--navbar-h))",
-          }}
-        >
+        {/* Page content takes remaining height */}
+        <main className="flex-1 min-h-0 relative overflow-hidden">
           {children}
-        </div>
+        </main>
       </body>
     </html>
   );

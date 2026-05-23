@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import heapq
 from collections import deque
 from typing import Literal
 
@@ -404,3 +405,209 @@ def find_girth(
                         min_cycle = cycle_len
 
     return min_cycle
+
+
+# ── Weighted / MST algorithms ──────────────────────────────────────────────
+
+
+def _build_weighted_adj(
+    edges: list[GraphEdge],
+    *,
+    directed: bool,
+    default_weight: float = 1.0,
+) -> dict[str, list[tuple[str, float]]]:
+    """Build a weighted adjacency list.
+
+    If an edge has no weight (w is None), `default_weight` is used instead.
+    """
+    adj: dict[str, list[tuple[str, float]]] = {}
+
+    for e in edges:
+        w = e.w if e.w is not None else default_weight
+        adj.setdefault(e.u, []).append((e.v, w))
+        adj.setdefault(e.v, [])
+        if not directed:
+            adj[e.v].append((e.u, w))
+
+    return adj
+
+
+def dijkstra(
+    edges: list[GraphEdge],
+    *,
+    directed: bool,
+    source: str,
+    target: str,
+) -> tuple[bool, list[str], float | None]:
+    """Find the shortest weighted path from *source* to *target* using Dijkstra.
+
+    Edges without a weight (w=None) are treated as weight=1.
+
+    Returns (exists, path_nodes, cost).
+    - `exists` is False when no path is reachable.
+    - `path_nodes` is the ordered list of node IDs on the shortest path.
+    - `cost` is the total path weight (None when unreachable).
+    """
+    if not edges:
+        return False, [], None
+
+    adj = _build_weighted_adj(edges, directed=directed)
+
+    if source not in adj:
+        raise ValueError(f"Node sumber '{source}' tidak ditemukan di graf")
+    if target not in adj:
+        raise ValueError(f"Node target '{target}' tidak ditemukan di graf")
+
+    if source == target:
+        return True, [source], 0.0
+
+    # dist[node] = best known cost from source
+    dist: dict[str, float] = {source: 0.0}
+    prev: dict[str, str | None] = {source: None}
+
+    # Min-heap: (cost, node)
+    heap: list[tuple[float, str]] = [(0.0, source)]
+
+    while heap:
+        cost_u, u = heapq.heappop(heap)
+
+        if cost_u > dist.get(u, float("inf")):
+            continue  # stale entry
+
+        if u == target:
+            break
+
+        for v, w in adj.get(u, []):
+            new_cost = cost_u + w
+            if new_cost < dist.get(v, float("inf")):
+                dist[v] = new_cost
+                prev[v] = u
+                heapq.heappush(heap, (new_cost, v))
+
+    if target not in dist:
+        return False, [], None
+
+    # Reconstruct path
+    path: list[str] = []
+    cur: str | None = target
+    while cur is not None:
+        path.append(cur)
+        cur = prev.get(cur)
+    path.reverse()
+
+    return True, path, dist[target]
+
+
+def prim_mst(
+    edges: list[GraphEdge],
+) -> tuple[list[GraphEdge], float, int, bool]:
+    """Compute a Minimum Spanning Tree using Prim's algorithm.
+
+    Always treats the graph as undirected (MST is only defined for undirected graphs).
+    Edges without a weight are treated as weight=1.
+
+    Returns (mst_edges, total_weight, node_count, is_spanning).
+    - `mst_edges` are the edges that form the MST.
+    - `total_weight` is the sum of their weights.
+    - `node_count` is the number of nodes in the largest spanning component found.
+    - `is_spanning` is True when the MST spans all nodes (i.e., graph is connected).
+    """
+    if not edges:
+        return [], 0.0, 0, True
+
+    adj = _build_weighted_adj(edges, directed=False)
+    all_nodes = list(adj.keys())
+    n = len(all_nodes)
+
+    visited: set[str] = set()
+    mst_edge_list: list[GraphEdge] = []
+    total_w: float = 0.0
+
+    # Start from the lexicographically smallest node for determinism
+    start = min(all_nodes)
+    visited.add(start)
+
+    # Heap entries: (weight, from_node, to_node)
+    heap: list[tuple[float, str, str]] = []
+    for neighbor, w in adj[start]:
+        heapq.heappush(heap, (w, start, neighbor))
+
+    while heap and len(visited) < n:
+        w, u, v = heapq.heappop(heap)
+        if v in visited:
+            continue
+        visited.add(v)
+        mst_edge_list.append(GraphEdge(u=u, v=v, w=w))
+        total_w += w
+        for neighbor, nw in adj[v]:
+            if neighbor not in visited:
+                heapq.heappush(heap, (nw, v, neighbor))
+
+    return mst_edge_list, total_w, len(visited), len(visited) == n
+
+
+def kruskal_mst(
+    edges: list[GraphEdge],
+) -> tuple[list[GraphEdge], float, int, bool]:
+    """Compute a Minimum Spanning Tree using Kruskal's algorithm.
+
+    Always treats the graph as undirected (MST is only defined for undirected graphs).
+    Edges without a weight are treated as weight=1.
+
+    Uses a Union-Find (Disjoint Set Union) data structure.
+
+    Returns (mst_edges, total_weight, node_count, is_spanning).
+    """
+    if not edges:
+        return [], 0.0, 0, True
+
+    all_nodes: set[str] = set()
+    for e in edges:
+        all_nodes.add(e.u)
+        all_nodes.add(e.v)
+
+    n = len(all_nodes)
+
+    # Union-Find helpers
+    parent: dict[str, str] = {node: node for node in all_nodes}
+    rank: dict[str, int] = {node: 0 for node in all_nodes}
+
+    def find(x: str) -> str:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]  # path compression
+            x = parent[x]
+        return x
+
+    def union(x: str, y: str) -> bool:
+        rx, ry = find(x), find(y)
+        if rx == ry:
+            return False  # already in the same set
+        if rank[rx] < rank[ry]:
+            rx, ry = ry, rx
+        parent[ry] = rx
+        if rank[rx] == rank[ry]:
+            rank[rx] += 1
+        return True
+
+    # Sort edges by weight (ascending), break ties by node names for determinism
+    sorted_edges = sorted(
+        edges,
+        key=lambda e: (e.w if e.w is not None else 1.0, e.u, e.v),
+    )
+
+    mst_edge_list: list[GraphEdge] = []
+    total_w: float = 0.0
+
+    for e in sorted_edges:
+        w = e.w if e.w is not None else 1.0
+        if union(e.u, e.v):
+            mst_edge_list.append(GraphEdge(u=e.u, v=e.v, w=w))
+            total_w += w
+            if len(mst_edge_list) == n - 1:
+                break  # MST is complete
+
+    # is_spanning: all nodes belong to the same component
+    roots = {find(node) for node in all_nodes}
+    is_spanning = len(roots) == 1
+
+    return mst_edge_list, total_w, n, is_spanning

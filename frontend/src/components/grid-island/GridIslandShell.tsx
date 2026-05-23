@@ -653,7 +653,7 @@ export default function GridIslandShell() {
                   cursor: !grid || isCounting || isSimulating ? "not-allowed" : "pointer",
                 }}
               >
-                {isSimulating ? "Menyimulasikan..." : "Simulasikan Traversal"}
+                {isSimulating ? "Menyimulasikan..." : "▶ Run Traversal"}
               </button>
 
               <button
@@ -669,7 +669,7 @@ export default function GridIslandShell() {
                   cursor: !grid || isCounting || isSimulating ? "not-allowed" : "pointer",
                 }}
               >
-                {isCounting ? "Menghitung..." : "Hitung Jumlah Island"}
+                {isCounting ? "Menghitung..." : "▶ Run Hitung Island"}
               </button>
 
               {islandCount != null && (

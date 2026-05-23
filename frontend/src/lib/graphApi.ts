@@ -96,8 +96,6 @@ export function findComponents(params: { directed: boolean; edges: GraphEdgeInpu
   return postJson<ComponentsResponse>("/api/v1/graph/components", params);
 }
 
-// ── New feature API functions ────────────────────────────────────────────────
-
 export interface LargestComponentResponse {
   directed: boolean;
   mode: "undirected" | "weak";
@@ -148,4 +146,39 @@ export function detectCycle(params: { directed: boolean; edges: GraphEdgeInput[]
 
 export function getGirth(params: { directed: boolean; edges: GraphEdgeInput[] }) {
   return postJson<GirthResponse>("/api/v1/graph/girth", params);
+}
+
+// ── Weighted / MST API functions ─────────────────────────────────────────────
+
+export interface ShortestPathResponse {
+  directed: boolean;
+  source: string;
+  target: string;
+  exists: boolean;
+  path: string[];
+  cost: number | null;
+}
+
+export interface MSTResponse {
+  mst_edges: Array<{ u: string; v: string; w: number | null }>;
+  total_weight: number;
+  node_count: number;
+  is_spanning: boolean;
+}
+
+export function runDijkstra(params: {
+  directed: boolean;
+  edges: GraphEdgeInput[];
+  source: string;
+  target: string;
+}) {
+  return postJson<ShortestPathResponse>("/api/v1/graph/dijkstra", params);
+}
+
+export function runPrim(params: { directed: boolean; edges: GraphEdgeInput[] }) {
+  return postJson<MSTResponse>("/api/v1/graph/prim", params);
+}
+
+export function runKruskal(params: { directed: boolean; edges: GraphEdgeInput[] }) {
+  return postJson<MSTResponse>("/api/v1/graph/kruskal", params);
 }
