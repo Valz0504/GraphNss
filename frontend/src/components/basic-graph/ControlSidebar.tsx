@@ -3,7 +3,9 @@
 import { useRef, useState } from "react";
 
 import AlgorithmPickerModal, { ALL_ALGORITHMS } from "./AlgorithmPickerModal";
+import GraphGeneratorModal from "./GraphGeneratorModal";
 import type { AlgorithmId } from "./types";
+import type { GeneratedGraph } from "@/lib/graphGenerators";
 
 /* ─────────────────────────────────────────────
    Sub-components
@@ -120,6 +122,7 @@ interface ControlSidebarProps {
     nodeB?: string;
   }) => void;
   onResetAll?: () => void;
+  onGenerateDefaultGraph?: (graph: GeneratedGraph) => void;
 }
 
 export default function ControlSidebar({
@@ -133,10 +136,12 @@ export default function ControlSidebar({
   onWeightedChange,
   onSimulate,
   onResetAll,
+  onGenerateDefaultGraph,
 }: ControlSidebarProps) {
   /* Algorithm state */
   const [selectedAlgo, setSelectedAlgo] = useState<AlgorithmId>("dfs");
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [generatorOpen, setGeneratorOpen] = useState(false);
 
   /* Conditional input state */
   const [startNode, setStartNode]   = useState<string>("");
@@ -183,6 +188,14 @@ export default function ControlSidebar({
         currentId={selectedAlgo}
         onSelect={(id) => setSelectedAlgo(id)}
         onClose={() => setPickerOpen(false)}
+      />
+
+      <GraphGeneratorModal
+        isOpen={generatorOpen}
+        onClose={() => setGeneratorOpen(false)}
+        onGenerate={(graph) => {
+          onGenerateDefaultGraph?.(graph);
+        }}
       />
 
       <aside
@@ -293,25 +306,40 @@ export default function ControlSidebar({
                 className="hidden"
                 onChange={handleFileUpload}
               />
-              {/* Upload .txt button */}
-              <button
-                id="btn-upload"
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all hover:brightness-125 active:scale-[0.98]"
-                style={{
-                  color: "var(--text-subtle)",
-                  background: "var(--bg-raised)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="17 8 12 3 7 8" />
-                  <line x1="12" y1="3" x2="12" y2="15" />
-                </svg>
-                Upload File .txt
-              </button>
+              <div className="flex gap-2">
+                {/* Generate Default Graph button */}
+                <button
+                  type="button"
+                  onClick={() => setGeneratorOpen(true)}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all hover:brightness-125 active:scale-[0.98]"
+                  style={{
+                    color: "var(--text-base)",
+                    background: "rgba(220,38,38,0.15)",
+                    border: "1px solid rgba(220,38,38,0.4)",
+                  }}
+                >
+                  Special Graph
+                </button>
+                {/* Upload .txt button */}
+                <button
+                  id="btn-upload"
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all hover:brightness-125 active:scale-[0.98]"
+                  style={{
+                    color: "var(--text-subtle)",
+                    background: "var(--bg-raised)",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                  Upload File .txt
+                </button>
+              </div>
             </div>
 
             {/* Graph type toggles */}
