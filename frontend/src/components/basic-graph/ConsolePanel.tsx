@@ -97,6 +97,7 @@ export default function ConsolePanel({ lines }: ConsolePanelProps) {
     output: "var(--text-base)",
     error:  "#f87171",
     muted:  "var(--text-muted)",
+    swap:   "#fbbf24",
   };
 
   return (
@@ -187,9 +188,41 @@ export default function ConsolePanel({ lines }: ConsolePanelProps) {
           {lines.map((line, i) => (
             <div key={i} className="flex items-start gap-2 text-[12.5px] leading-relaxed">
               <span style={{ color: "var(--text-muted)", flexShrink: 0 }}>
-                {line.type === "info" ? "$" : ">>"}
+                {line.type === "info" ? "$" : line.type === "swap" ? "↻" : ">>"}
               </span>
-              <span style={{ color: lineColor[line.type] }}>{line.text}</span>
+              {line.type === "swap" && line.meta ? (
+                <span style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                  <span
+                    style={{
+                      background: "rgba(251,191,36,0.12)",
+                      border: "1px solid rgba(251,191,36,0.30)",
+                      color: "#fbbf24",
+                      borderRadius: "4px",
+                      padding: "0 6px",
+                      fontWeight: 700,
+                      letterSpacing: "0.01em",
+                    }}
+                  >
+                    Node {line.meta.from}
+                  </span>
+                  <span style={{ color: "#6b7280", fontSize: "11px" }}>→</span>
+                  <span
+                    style={{
+                      background: "rgba(74,222,128,0.12)",
+                      border: "1px solid rgba(74,222,128,0.30)",
+                      color: "#4ade80",
+                      borderRadius: "4px",
+                      padding: "0 6px",
+                      fontWeight: 700,
+                      letterSpacing: "0.01em",
+                    }}
+                  >
+                    Node {line.meta.to}
+                  </span>
+                </span>
+              ) : (
+                <span style={{ color: lineColor[line.type] }}>{line.text}</span>
+              )}
             </div>
           ))}
           {/* Blinking cursor */}
