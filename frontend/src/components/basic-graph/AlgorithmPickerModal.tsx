@@ -122,6 +122,20 @@ export const ALGORITHM_CATEGORIES: AlgorithmCategory[] = [
         inputType: "none",
         description: "Panjang siklus terkecil dalam graf",
       },
+      {
+        id: "matching",
+        label: "Max Bipartite Matching",
+        number: 14,
+        inputType: "none",
+        description: "Pencarian pasangan maksimal pada graf bipartit",
+      },
+      {
+        id: "bandwidth",
+        label: "Graph Bandwidth (Cuthill-McKee)",
+        number: 15,
+        inputType: "none",
+        description: "Reduksi bandwidth dan pertukaran posisi node dengan algoritma RCM",
+      },
     ],
   },
   {
