@@ -30,4 +30,4 @@ testcases/
 3. Aktifkan toggle **Directed** jika test case bertanda `[DIRECTED]`
 4. Pilih algoritma yang sesuai
 5. Isi parameter tambahan sesuai keterangan di tiap file (misal Start Node)
-6. Klik **▶ Simulasikan**
+6. Klik **▶ Run**

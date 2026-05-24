@@ -117,5 +117,17 @@ class MSTResponse(BaseModel):
     total_weight: float
     # Number of nodes in the MST
     node_count: int
-    # True only when the MST spans all nodes (graph is connected)
     is_spanning: bool
+
+class MatchingResponse(BaseModel):
+    directed: bool
+    is_bipartite: bool
+    matches: list[GraphEdge] = Field(default_factory=list)
+    size: int
+
+
+class BandwidthResponse(BaseModel):
+    directed: bool
+    original_bandwidth: int
+    new_bandwidth: int
+    node_ordering: list[str] = Field(default_factory=list)
