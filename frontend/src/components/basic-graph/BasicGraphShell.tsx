@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { checkBipartite, checkConnectivity, checkPath, detectCycle, findComponents, getDiameter, getGirth, getLargestComponent, runDijkstra, runKruskal, runPrim, simulateBfs, simulateDfs } from "@/lib/graphApi";
+import { checkBipartite, checkConnectivity, checkPath, detectCycle, fetchBandwidth, fetchMaximumMatching, findComponents, getDiameter, getGirth, getLargestComponent, runDijkstra, runKruskal, runPrim, simulateBfs, simulateDfs } from "@/lib/graphApi";
 import ControlSidebar from "./ControlSidebar";
 import ConsolePanel from "./ConsolePanel";
 import GraphCanvas from "./GraphCanvas";
@@ -37,6 +37,7 @@ function CanvasArea({
     pathNodeIds: Set<string>;
     edgeHighlights: Set<string>;
     activeEdgeKey: string | null;
+    nodeLabels?: Record<string, string>;
   };
 }) {
   return (
@@ -63,6 +64,7 @@ function CanvasArea({
               pathNodeIds: highlight.pathNodeIds,
               edgeHighlights: highlight.edgeHighlights,
               activeEdgeKey: highlight.activeEdgeKey,
+              nodeLabels: highlight.nodeLabels,
             }}
           />
         </div>
@@ -133,6 +135,7 @@ export default function BasicGraphShell() {
   const [visitedNodeIds, setVisitedNodeIds] = useState<Set<string>>(new Set());
   const [pathNodeIds, setPathNodeIds] = useState<Set<string>>(new Set());
   const [edgeHighlights, setEdgeHighlights] = useState<Set<string>>(new Set());
+  const [nodeLabels, setNodeLabels] = useState<Record<string, string>>({});
 
   const [isBusy, setIsBusy] = useState(false);
   const timersRef = useRef<number[]>([]);
@@ -155,6 +158,7 @@ export default function BasicGraphShell() {
     setVisitedNodeIds(new Set());
     setPathNodeIds(new Set());
     setEdgeHighlights(new Set());
+    setNodeLabels({});
   }, [clearTimers]);
 
   const setGraphFromInput = useCallback(
@@ -696,6 +700,137 @@ export default function BasicGraphShell() {
           appendLine({ type: "info", text: "Simulasi selesai." });
           return;
         }
+
+        if (payload.algorithm === "matching") {
+          appendLine({ type: "info", text: "Mencari Maximum Bipartite Matching..." });
+          const res = await fetchMaximumMatching({ directed: isDirected, edges });
+          if (token !== runTokenRef.current) return;
+
+          if (!res.is_bipartite) {
+            appendLine({ type: "error", text: "Gagal: Graf BUKAN graf bipartit." });
+            setIsBusy(false);
+            return;
+          }
+
+          appendLine({ type: "output", text: `Maximum Matching ditemukan: ${res.size} pasang.` });
+          const matchKeys = new Set<string>();
+          res.matches.forEach((e: { u: string; v: string }) => {
+            appendLine({ type: "output", text: `  ( ${e.u} — ${e.v} )` });
+            matchKeys.add(edgeKey(e.u, e.v, isDirected));
+          });
+          setEdgeHighlights(matchKeys);
+          setPathNodeIds(new Set());
+          setVisitedNodeIds(new Set());
+          setIsBusy(false);
+          return;
+        }
+
+        if (payload.algorithm === "bandwidth") {
+          appendLine({ type: "info", text: "Menghitung Bandwidth Graf..." });
+          const res = await fetchBandwidth({ directed: isDirected, edges });
+          if (token !== runTokenRef.current) return;
+
+          appendLine({ type: "output", text: `Bandwidth awal: ${res.original_bandwidth}` });
+          await new Promise(r => setTimeout(r, 1500));
+          if (token !== runTokenRef.current) return;
+
+          appendLine({ type: "info", text: "Menjalankan Reverse Cuthill-McKee (RCM)..." });
+          await new Promise(r => setTimeout(r, 1000));
+          if (token !== runTokenRef.current) return;
+
+          appendLine({ type: "output", text: `Bandwidth sesudah RCM: ${res.new_bandwidth}` });
+          await new Promise(r => setTimeout(r, 600));
+          if (token !== runTokenRef.current) return;
+
+          // node_ordering: the RCM permutation of node IDs.
+          // nodesSorted: the canonical sorted list of existing node IDs.
+          // Mapping: newOrder[i] (which node sits at position i in RCM) → nodesSorted[i].id
+          // i.e., the node currently named newOrder[i] will be renamed to nodesSorted[i].id
+          const nodesSorted = [...(graph?.nodes || [])].sort((a, b) => a.id.localeCompare(b.id));
+          const newOrder: string[] = res.node_ordering;
+
+          // Build the final rename map, filtering out identity mappings
+          const mapping = new Map<string, string>();
+          for (let i = 0; i < nodesSorted.length && i < newOrder.length; i++) {
+            const oldId = newOrder[i]!;
+            const newId = nodesSorted[i]!.id;
+            if (oldId !== newId) {
+              mapping.set(oldId, newId);
+            }
+          }
+
+          if (mapping.size === 0) {
+            appendLine({ type: "info", text: "Urutan node sudah optimal — tidak ada perubahan." });
+            setIsBusy(false);
+            return;
+          }
+
+          appendLine({ type: "info", text: `Mengubah label ${mapping.size} node secara live...` });
+          await new Promise(r => setTimeout(r, 400));
+          if (token !== runTokenRef.current) return;
+
+          let swapCount = 0;
+          let currentLabels: Record<string, string> = {};
+          const stepMs = 650;
+
+          // Animate each rename step one-by-one
+          for (const [oldId, newId] of mapping.entries()) {
+
+            if (token !== runTokenRef.current) return;
+
+            swapCount++;
+
+            // Live highlight the node being renamed on canvas
+            setActiveNodeId(oldId);
+
+            // Show the new label over the node in real-time
+            currentLabels = { ...currentLabels, [oldId]: newId };
+            setNodeLabels({ ...currentLabels });
+
+            // Styled swap line in console: "Node 8 → Node 3"
+            appendLine({
+              type: "swap",
+              text: `Node ${oldId} -> Node ${newId}`,
+              meta: { from: oldId, to: newId },
+            });
+
+            await new Promise(r => setTimeout(r, stepMs));
+          }
+
+          if (token !== runTokenRef.current) return;
+
+          // Clear active highlight
+          setActiveNodeId(null);
+
+          // Commit the new IDs permanently to the graph model
+          setGraph((prev) => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              nodes: prev.nodes.map((n) => ({
+                ...n,
+                id: mapping.get(n.id) ?? n.id,
+              })),
+              edges: prev.edges.map((e) => ({
+                ...e,
+                from: mapping.get(e.from) ?? e.from,
+                to: mapping.get(e.to) ?? e.to,
+              })),
+            };
+          });
+
+          // Clear temporary overlay labels — permanent IDs are now set
+          setNodeLabels({});
+
+          appendLine({
+            type: "info",
+            text: `Selesai! ${swapCount} node di-rename. Bandwidth: ${res.original_bandwidth} → ${res.new_bandwidth}`,
+          });
+          setIsBusy(false);
+          return;
+        }
+
+
       } catch (err) {
         if (token !== runTokenRef.current) return;
         appendLine({
@@ -709,6 +844,7 @@ export default function BasicGraphShell() {
       animateNodeSequence,
       appendLine,
       clearTimers,
+      graph,
       graphInput,
       isDirected,
       isWeighted,
@@ -716,6 +852,7 @@ export default function BasicGraphShell() {
       setGraphFromInput,
     ]
   );
+
 
   return (
     <div className="relative flex h-full overflow-hidden">
@@ -732,6 +869,7 @@ export default function BasicGraphShell() {
             pathNodeIds,
             edgeHighlights,
             activeEdgeKey,
+            nodeLabels,
           }}
         />
         <ConsolePanel lines={lines} />

@@ -49,6 +49,7 @@ export interface GraphCanvasHighlight {
   pathNodeIds?: Set<string>;
   edgeHighlights?: Set<string>; // keys from edgeKey()
   activeEdgeKey?: string | null;
+  nodeLabels?: Record<string, string>; // for temporarily overriding node display labels
 }
 
 export default function GraphCanvas(props: {
@@ -419,6 +420,7 @@ export default function GraphCanvas(props: {
                   markerEnd={markerEnd}
                   opacity={isActive || isHL ? 1 : 0.85}
                   strokeLinecap="round"
+                  style={{ transition: "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }}
                 />
 
                 {/* Weight label — show whenever the edge has a numeric weight */}
@@ -464,16 +466,27 @@ export default function GraphCanvas(props: {
             const isActive = highlight.activeNodeId === n.id;
             const isPath = pathNodes.has(n.id);
             const isVisited = visited.has(n.id);
+            const overrideLabel = highlight.nodeLabels?.[n.id];
+            const hasOverride = overrideLabel !== undefined && overrideLabel !== n.id;
+            const displayLabel = overrideLabel ?? n.id;
 
             const stroke = isActive
-              ? "var(--accent)"
+              ? "#fbbf24"   // amber for bandwidth rename active node
+              : hasOverride
+              ? "rgba(251,191,36,0.6)"
               : isPath
               ? "var(--accent)"
               : isVisited
               ? "var(--primary-light)"
               : "var(--text-muted)";
 
-            const fill = isActive || isPath || isVisited ? "var(--bg-raised)" : "var(--bg-overlay)";
+            const fill = isActive
+              ? "var(--bg-raised)"
+              : hasOverride
+              ? "rgba(251,191,36,0.08)"
+              : isPath || isVisited
+              ? "var(--bg-raised)"
+              : "var(--bg-overlay)";
 
             return (
               <g
@@ -498,30 +511,82 @@ export default function GraphCanvas(props: {
                 }}
                 style={{
                   cursor: !onMoveNode ? "default" : nodeDrag?.nodeId === n.id ? "grabbing" : "grab",
+                  transition: nodeDrag?.nodeId === n.id ? "none" : "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s, stroke 0.2s",
                 }}
               >
+                {/* Pulsing outer ring for the currently active rename node */}
+                {isActive && (
+                  <circle
+                    r={28}
+                    fill="none"
+                    stroke="#fbbf24"
+                    strokeWidth={1.5}
+                    opacity={0.5}
+                    style={{ animation: "ping 1s cubic-bezier(0,0,0.2,1) infinite" }}
+                  />
+                )}
+
                 <circle
                   r={20}
                   fill={fill}
                   stroke={stroke}
-                  strokeWidth={isActive ? 4.2 : isPath ? 3.2 : isVisited ? 2.8 : 1.6}
+                  strokeWidth={isActive ? 3.5 : hasOverride ? 2.4 : isPath ? 3.2 : isVisited ? 2.8 : 1.6}
+                  style={{ transition: "stroke 0.3s, fill 0.3s, stroke-width 0.3s" }}
                 />
+
+                {/* Main label (new name if overriding, else node id) */}
                 <text
                   y={4}
                   textAnchor="middle"
-                  fontSize={12}
+                  fontSize={hasOverride ? 13 : 12}
+                  fontWeight={hasOverride ? "700" : "400"}
                   style={{
                     fontFamily: "var(--font-mono, monospace)",
-                    fill: "var(--text-base)",
+                    fill: isActive
+                      ? "#fbbf24"
+                      : hasOverride
+                      ? "#fbbf24"
+                      : "var(--text-base)",
                     userSelect: "none",
                     pointerEvents: "none",
+                    transition: "fill 0.3s",
                   }}
                 >
-                  {n.id}
+                  {displayLabel}
                 </text>
+
+                {/* "was: X" badge above node when label is being overridden */}
+                {hasOverride && (
+                  <g>
+                    <rect
+                      x={-14}
+                      y={-38}
+                      width={28}
+                      height={14}
+                      rx={3}
+                      fill="rgba(251,191,36,0.15)"
+                      stroke="rgba(251,191,36,0.4)"
+                      strokeWidth={0.8}
+                    />
+                    <text
+                      y={-28}
+                      textAnchor="middle"
+                      fontSize={8}
+                      style={{
+                        fontFamily: "var(--font-mono, monospace)",
+                        fill: "rgba(251,191,36,0.9)",
+                        userSelect: "none",
+                        pointerEvents: "none",
+                      }}
+                    >
+                      was: {n.id}
+                    </text>
+                  </g>
+                )}
               </g>
             );
           })}
+
 
           {/* Hint */}
           <text
