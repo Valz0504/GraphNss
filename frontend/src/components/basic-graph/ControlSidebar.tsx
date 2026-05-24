@@ -21,7 +21,7 @@ function SidebarSection({
     <div className="flex flex-col gap-3">
       <p
         className="text-[10px] font-semibold uppercase tracking-widest"
-        style={{ color: "var(--text-muted)" }}
+        style={{ color: "var(--text-subtle)" }}
       >
         {title}
       </p>
@@ -48,7 +48,7 @@ function LabeledInput({ label, id, value, onChange, placeholder, hint }: Labeled
       <label
         htmlFor={id}
         className="text-[12px] font-medium"
-        style={{ color: "var(--text-subtle)" }}
+        style={{ color: "var(--text-base)" }}
       >
         {label}
       </label>
@@ -86,16 +86,17 @@ function ToggleChip({
     <button
       type="button"
       onClick={onToggle}
-      className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-150"
+      className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-150 hover:brightness-95 active:scale-[0.97]"
       style={{
-        background: active ? "rgba(220,38,38,0.15)" : "var(--bg-raised)",
-        color: active ? "var(--primary-light)" : "var(--text-subtle)",
-        border: `1px solid ${active ? "rgba(220,38,38,0.4)" : "var(--border)"}`,
+        background: active ? "rgba(220,38,38,0.1)" : "var(--bg-raised)",
+        color: active ? "var(--primary)" : "var(--text-base)",
+        border: `1px solid ${active ? "rgba(220,38,38,0.45)" : "var(--border-strong)"}`,
+        boxShadow: active ? "0 1px 4px rgba(220,38,38,0.12)" : "none",
       }}
     >
       <span
         className="h-2 w-2 rounded-full transition-colors"
-        style={{ background: active ? "var(--primary)" : "var(--text-muted)" }}
+        style={{ background: active ? "var(--primary)" : "#d1d5db" }}
       />
       {label}
     </button>
@@ -204,6 +205,7 @@ export default function ControlSidebar({
           width: "320px",
           background: "var(--bg-surface)",
           borderLeft: "1px solid var(--border)",
+          boxShadow: "-4px 0 24px rgba(0,0,0,0.06)",
         }}
       >
         {/* ── Sidebar Header ── */}
@@ -325,11 +327,11 @@ export default function ControlSidebar({
                   id="btn-upload"
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all hover:brightness-125 active:scale-[0.98]"
+                  className="flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all hover:bg-gray-100 active:scale-[0.98]"
                   style={{
-                    color: "var(--text-subtle)",
+                    color: "var(--text-base)",
                     background: "var(--bg-raised)",
-                    border: "1px solid var(--border)",
+                    border: "1px solid var(--border-strong)",
                   }}
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -366,10 +368,10 @@ export default function ControlSidebar({
               id="btn-pick-algo"
               type="button"
               onClick={() => setPickerOpen(true)}
-              className="w-full flex items-center gap-3 rounded-xl px-3 py-3 text-left transition-all duration-150 hover:brightness-110 active:scale-[0.98]"
+              className="w-full flex items-center gap-3 rounded-xl px-3 py-3 text-left transition-all duration-150 hover:border-red-300 hover:shadow-sm active:scale-[0.98]"
               style={{
                 background: "var(--bg-raised)",
-                border: "1px solid var(--border)",
+                border: "1px solid var(--border-strong)",
               }}
             >
               {/* Info */}
@@ -377,7 +379,7 @@ export default function ControlSidebar({
                 <div className="flex items-center gap-2">
                   <span
                     className="text-[13px] font-semibold truncate"
-                    style={{ color: "var(--text-base)" }}
+                    style={{ color: "var(--primary)" }}
                   >
                     {currentAlgo.label}
                   </span>
@@ -394,7 +396,7 @@ export default function ControlSidebar({
                 </div>
                 <span
                   className="text-[11px] truncate"
-                  style={{ color: "var(--text-muted)" }}
+                  style={{ color: "var(--text-subtle)" }}
                 >
                   {currentAlgo.description}
                 </span>
@@ -493,11 +495,11 @@ export default function ControlSidebar({
               id="btn-reset"
               type="button"
               onClick={handleReset}
-              className="w-full rounded-lg py-2 text-sm font-medium transition-all duration-150 hover:brightness-125 active:scale-[0.98]"
+              className="w-full rounded-lg py-2 text-sm font-medium transition-all duration-150 hover:bg-gray-100 active:scale-[0.98]"
               style={{
                 background: "var(--bg-raised)",
-                color: "var(--text-subtle)",
-                border: "1px solid var(--border)",
+                color: "var(--text-base)",
+                border: "1px solid var(--border-strong)",
               }}
             >
               Reset

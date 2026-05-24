@@ -20,8 +20,8 @@ export default function Navbar() {
   return (
     <>
       <header
-        className="glass relative shrink-0 z-50 flex items-center px-4 md:px-6"
-        style={{ height: "var(--navbar-h)", borderBottom: "1px solid var(--border)" }}
+        className="relative shrink-0 z-50 flex items-center px-4 md:px-6"
+        style={{ height: "var(--navbar-h)", background: "#111827", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
       >
         {/* ── Logo ── */}
         <Link href="/basic-graph" className="flex shrink-0 items-center gap-2.5 w-36 md:w-44">
@@ -34,8 +34,8 @@ export default function Navbar() {
             priority
             unoptimized
           />
-          <span className="text-sm font-bold tracking-tight" style={{ color: "var(--text-base)" }}>
-            Graph<span style={{ color: "var(--primary-light)" }}>Nss</span>
+          <span className="text-sm font-bold tracking-tight" style={{ color: "#f9fafb" }}>
+            Graph<span style={{ color: "#f87171" }}>Nss</span>
           </span>
         </Link>
 
@@ -49,8 +49,8 @@ export default function Navbar() {
                 href={href}
                 className="rounded-lg px-4 py-2 text-[13px] font-medium transition-all duration-150"
                 style={{
-                  background: isActive ? "rgba(220,38,38,0.14)" : "transparent",
-                  color: isActive ? "var(--primary-light)" : "var(--text-subtle)",
+                  background: isActive ? "rgba(248,113,113,0.15)" : "transparent",
+                  color: isActive ? "#f87171" : "rgba(255,255,255,0.6)",
                 }}
               >
                 {label}
@@ -63,7 +63,7 @@ export default function Navbar() {
         <div className="hidden md:flex w-44 justify-end">
           <span
             className="rounded px-2 py-0.5 text-[11px] font-medium"
-            style={{ color: "var(--text-muted)", background: "var(--bg-raised)", border: "1px solid var(--border)" }}
+            style={{ color: "rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}
           >
             v1.0
           </span>
@@ -77,12 +77,11 @@ export default function Navbar() {
             aria-label="Toggle navigation"
             className="flex h-9 w-9 items-center justify-center rounded-lg transition-colors"
             style={{
-              background: mobileOpen ? "rgba(220,38,38,0.14)" : "transparent",
-              border: "1px solid var(--border)",
+              background: mobileOpen ? "rgba(248,113,113,0.15)" : "transparent",
+              border: "1px solid rgba(255,255,255,0.12)",
             }}
           >
-            {/* Hamburger / X icon */}
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="var(--text-subtle)" strokeWidth="1.8" strokeLinecap="round">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.8" strokeLinecap="round">
               {mobileOpen ? (
                 <>
                   <line x1="3" y1="3" x2="15" y2="15" />
@@ -106,7 +105,7 @@ export default function Navbar() {
           {/* Backdrop */}
           <div
             className="md:hidden fixed inset-0 z-40"
-            style={{ top: "var(--navbar-h)", background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }}
+            style={{ top: "var(--navbar-h)", background: "rgba(0,0,0,0.35)", backdropFilter: "blur(4px)" }}
             onClick={() => setMobileOpen(false)}
           />
           {/* Menu panel */}
@@ -114,8 +113,8 @@ export default function Navbar() {
             className="md:hidden fixed inset-x-0 z-40 flex flex-col gap-1 px-4 py-3"
             style={{
               top: "var(--navbar-h)",
-              background: "var(--bg-surface)",
-              borderBottom: "1px solid var(--border)",
+              background: "#1f2937",
+              borderBottom: "1px solid rgba(255,255,255,0.08)",
             }}
           >
             {NAV_ITEMS.map(({ href, label }) => {
@@ -127,8 +126,8 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className="rounded-lg px-4 py-2.5 text-sm font-medium transition-all"
                   style={{
-                    background: isActive ? "rgba(220,38,38,0.14)" : "transparent",
-                    color: isActive ? "var(--primary-light)" : "var(--text-subtle)",
+                    background: isActive ? "rgba(248,113,113,0.15)" : "transparent",
+                    color: isActive ? "#f87171" : "rgba(255,255,255,0.65)",
                   }}
                 >
                   {label}

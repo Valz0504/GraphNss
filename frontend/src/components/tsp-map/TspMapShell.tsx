@@ -99,7 +99,7 @@ function TspControlSidebar({
   return (
     <div
       className="flex h-full flex-col overflow-y-auto"
-      style={{ width: 320, background: "var(--bg-surface)", borderLeft: "1px solid var(--border)" }}
+      style={{ width: 320, background: "var(--bg-surface)", borderLeft: "1px solid var(--border)", boxShadow: "-4px 0 24px rgba(0,0,0,0.06)" }}
     >
       {/* Header */}
       <div
@@ -122,7 +122,7 @@ function TspControlSidebar({
 
         {/* ── Algoritma ── */}
         <div className="flex flex-col gap-2">
-          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-subtle)" }}>
             Algoritma
           </p>
           {ALGORITHM_OPTIONS.map((opt) => {
@@ -134,13 +134,14 @@ function TspControlSidebar({
                 onClick={() => onAlgorithmChange(opt.id)}
                 className="rounded-lg px-3 py-2 text-left transition-all"
                 style={{
-                  background: active ? "rgba(220,38,38,0.14)" : "var(--bg-raised)",
-                  border:     `1px solid ${active ? "rgba(220,38,38,0.40)" : "var(--border)"}`,
+                  background: active ? "rgba(220,38,38,0.08)" : "var(--bg-raised)",
+                  border:     `1px solid ${active ? "rgba(220,38,38,0.45)" : "var(--border-strong)"}`,
+                  boxShadow:  active ? "0 1px 6px rgba(220,38,38,0.12)" : "none",
                   opacity:    isBusy ? 0.5 : 1,
                   cursor:     isBusy ? "not-allowed" : "pointer",
                 }}
               >
-                <p className="text-[12px] font-semibold" style={{ color: active ? "var(--primary-light)" : "var(--text-base)" }}>
+                <p className="text-[12px] font-semibold" style={{ color: active ? "var(--primary)" : "var(--text-base)" }}>
                   {opt.label}
                 </p>
                 <p className="text-[11px]" style={{ color: "var(--text-muted)" }}>{opt.desc}</p>
@@ -153,7 +154,7 @@ function TspControlSidebar({
 
         {/* ── Tambah dari daftar ── */}
         <div className="flex flex-col gap-2">
-          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-subtle)" }}>
             Tambah dari Daftar
           </p>
 
@@ -221,7 +222,7 @@ function TspControlSidebar({
 
         {/* ── Daftar Kota ── */}
         <div className="flex flex-col gap-2">
-          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-subtle)" }}>
             Daftar Kota ({cities.length})
           </p>
 
@@ -290,14 +291,14 @@ function TspControlSidebar({
             <button
               onClick={onReset}
               className="flex-1 rounded-lg py-1.5 text-xs font-medium hover:brightness-110"
-              style={{ background: "var(--bg-raised)", color: "var(--text-subtle)", border: "1px solid var(--border)" }}
+              style={{ background: "var(--bg-raised)", color: "var(--text-base)", border: "1px solid var(--border-strong)" }}
             >
               Reset Rute
             </button>
             <button
               onClick={onClearAll}
               className="flex-1 rounded-lg py-1.5 text-xs font-medium hover:brightness-110"
-              style={{ background: "var(--bg-raised)", color: "var(--text-subtle)", border: "1px solid var(--border)" }}
+              style={{ background: "var(--bg-raised)", color: "var(--text-base)", border: "1px solid var(--border-strong)" }}
             >
               Hapus Semua
             </button>
@@ -501,7 +502,7 @@ export default function TspMapShell() {
             <div className="pointer-events-none absolute inset-0 z-400 flex items-center justify-center">
               <div
                 className="rounded-xl px-6 py-4 text-center"
-                style={{ background: "rgba(14,7,7,0.72)", border: "1px solid var(--border)", backdropFilter: "blur(8px)" }}
+                style={{ background: "rgba(255,255,255,0.88)", border: "1px solid var(--border)", backdropFilter: "blur(8px)" }}
               >
                 <p className="text-2xl mb-1">🗺️</p>
                 <p className="text-sm font-semibold" style={{ color: "var(--text-base)" }}>Klik di peta untuk menambah kota</p>
@@ -516,7 +517,7 @@ export default function TspMapShell() {
           {totalDistance !== null && (
             <div
               className="absolute top-3 right-3 z-400 rounded-xl px-4 py-2 shadow-lg"
-              style={{ background: "rgba(14,7,7,0.88)", border: "1px solid rgba(220,38,38,0.4)", backdropFilter: "blur(8px)" }}
+              style={{ background: "rgba(255,255,255,0.92)", border: "1px solid rgba(220,38,38,0.3)", backdropFilter: "blur(8px)" }}
             >
               <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>Total Jarak</p>
               <p className="text-xl font-bold" style={{ color: "var(--primary-light)" }}>{totalDistance.toFixed(2)} km</p>
