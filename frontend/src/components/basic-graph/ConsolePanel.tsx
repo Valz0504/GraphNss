@@ -91,12 +91,12 @@ export default function ConsolePanel({ lines }: ConsolePanelProps) {
     setHeight(prevHeight.current);
   };
 
-  /* ── Text colors per line type ── */
+  /* ── Text colors per line type — hardcoded for dark terminal bg ── */
   const lineColor: Record<ConsoleLine["type"], string> = {
     info:   "#4ade80",
-    output: "var(--text-base)",
+    output: "#e5e7eb",
     error:  "#f87171",
-    muted:  "var(--text-muted)",
+    muted:  "#6b7280",
     swap:   "#fbbf24",
   };
 
@@ -134,7 +134,7 @@ export default function ConsolePanel({ lines }: ConsolePanelProps) {
           <TrafficLights onClose={close} />
           <span
             className="text-[11px] font-medium"
-            style={{ color: "var(--text-muted)" }}
+            style={{ color: "#6b7280" }}
           >
             Output Console
           </span>
@@ -149,9 +149,9 @@ export default function ConsolePanel({ lines }: ConsolePanelProps) {
             title="Perkecil konsol"
             className="flex items-center gap-1 rounded px-2 py-0.5 text-[11px] transition-all hover:brightness-125"
             style={{
-              color:      "var(--text-muted)",
-              background: "var(--bg-raised)",
-              border:     "1px solid var(--border)",
+              color:      "#9ca3af",
+              background: "#1c1a18",
+              border:     "1px solid rgba(255,255,255,0.08)",
             }}
           >
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
@@ -187,7 +187,7 @@ export default function ConsolePanel({ lines }: ConsolePanelProps) {
         >
           {lines.map((line, i) => (
             <div key={i} className="flex items-start gap-2 text-[12.5px] leading-relaxed">
-              <span style={{ color: "var(--text-muted)", flexShrink: 0 }}>
+              <span style={{ color: "#4b5563", flexShrink: 0 }}>
                 {line.type === "info" ? "$" : line.type === "swap" ? "↻" : ">>"}
               </span>
               {line.type === "swap" && line.meta ? (
@@ -227,10 +227,10 @@ export default function ConsolePanel({ lines }: ConsolePanelProps) {
           ))}
           {/* Blinking cursor */}
           <div className="mt-1 flex items-center gap-2 text-[12.5px]">
-            <span style={{ color: "var(--text-muted)" }}>$</span>
+            <span style={{ color: "#4b5563" }}>$</span>
             <span
               className="inline-block h-3.5 w-1.75 animate-pulse-soft"
-              style={{ background: "var(--primary)", borderRadius: "1px" }}
+              style={{ background: "#dc2626", borderRadius: "1px" }}
             />
           </div>
 
