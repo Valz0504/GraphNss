@@ -493,8 +493,8 @@ export default function TspMapShell() {
       {/* ── Main: Map + Console ── */}
       <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
 
-        {/* Map area */}
-        <div className="relative flex-1 overflow-hidden">
+        {/* Map area — z-0 creates a stacking context so Leaflet panes (z:200–1000) are contained */}
+        <div className="relative z-0 flex-1 overflow-hidden">
 
           {/* Empty-state overlay */}
           {cities.length === 0 && (
