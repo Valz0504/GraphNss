@@ -28,7 +28,7 @@ function SidebarSection({
     <div className="flex flex-col gap-3">
       <p
         className="text-[10px] font-semibold uppercase tracking-widest"
-        style={{ color: "var(--text-muted)" }}
+        style={{ color: "var(--text-subtle)" }}
       >
         {title}
       </p>
@@ -140,7 +140,7 @@ function GridIslandSidebar({
   return (
     <div
       className="flex h-full flex-col overflow-y-auto"
-      style={{ width: 320, background: "var(--bg-surface)", borderLeft: "1px solid var(--border)" }}
+      style={{ width: 320, background: "var(--bg-surface)", borderLeft: "1px solid var(--border)", boxShadow: "-4px 0 24px rgba(0,0,0,0.06)" }}
     >
       {/* Header */}
       <div
@@ -434,7 +434,7 @@ export default function GridIslandShell() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [visitedCellKeys, setVisitedCellKeys] = useState<Set<string>>(() => new Set());
   const [activeCell, setActiveCell] = useState<{ r: number; c: number } | null>(null);
-  const [activeIsland, setActiveIsland] = useState<number | null>(null);
+  const [, setActiveIsland] = useState<number | null>(null);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
