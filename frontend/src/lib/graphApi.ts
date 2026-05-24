@@ -182,3 +182,19 @@ export function runPrim(params: { directed: boolean; edges: GraphEdgeInput[] }) 
 export function runKruskal(params: { directed: boolean; edges: GraphEdgeInput[] }) {
   return postJson<MSTResponse>("/api/v1/graph/kruskal", params);
 }
+
+// ── NEW FEATURES ────────────────────────────────────────────────────────────
+
+export async function fetchMaximumMatching(payload: {
+  directed: boolean;
+  edges: GraphEdgeInput[];
+}) {
+  return postJson<any>("/api/v1/graph/matching", payload);
+}
+
+export async function fetchBandwidth(payload: {
+  directed: boolean;
+  edges: GraphEdgeInput[];
+}) {
+  return postJson<any>("/api/v1/graph/bandwidth", payload);
+}
