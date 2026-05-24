@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import graph, grid_island, health, tsp
+from app.api.v1.endpoints import graph, grid_island, health, timetabling, tsp
 
 api_router = APIRouter()
 
@@ -10,4 +10,5 @@ api_router.include_router(
     grid_island.router, prefix="/grid-island", tags=["grid-island"]
 )
 api_router.include_router(tsp.router, prefix="/tsp", tags=["tsp"])
+api_router.include_router(timetabling.router, prefix="/timetabling", tags=["timetabling"])
 
