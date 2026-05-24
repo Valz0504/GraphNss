@@ -27,7 +27,7 @@ const TECH = ["Next.js 15", "TypeScript", "Tailwind CSS v4", "FastAPI", "Python 
 
 const MEMBERS = [
   { name: "Emilio Justin", nim: "13524043", photo: "/emilio.jpeg" },
-  { name: "Tria Sania Oktavia", nim: "10122036", photo: null },
+  { name: "Tria Sania Oktavia", nim: "10122036", photo: "/tria.png" },
 ] as const;
 
 export default function AboutShell() {
@@ -108,7 +108,7 @@ export default function AboutShell() {
         <section className="flex flex-col items-center gap-6">
           <div className="flex flex-col items-center gap-1 text-center">
             <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--primary-light)" }}>
-              Tim Pengembang
+              Team
             </h2>
             <p className="text-sm" style={{ color: "var(--text-muted)" }}>
               Proyek Teori Graf Algoritmik
