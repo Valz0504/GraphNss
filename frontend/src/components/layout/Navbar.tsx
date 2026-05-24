@@ -65,7 +65,7 @@ export default function Navbar() {
             className="rounded px-2 py-0.5 text-[11px] font-medium"
             style={{ color: "var(--text-muted)", background: "var(--bg-raised)", border: "1px solid var(--border)" }}
           >
-            v0.1.0
+            v1.0
           </span>
         </div>
 

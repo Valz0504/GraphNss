@@ -611,3 +611,86 @@ def kruskal_mst(
     is_spanning = len(roots) == 1
 
     return mst_edge_list, total_w, n, is_spanning
+
+# ── Matching & Bandwidth ────────────────────────────────────────────────────
+
+def find_maximum_bipartite_matching(edges: list[GraphEdge], *, directed: bool) -> tuple[bool, list[GraphEdge]]:
+    # 1. check bipartite
+    bip, grp_a, grp_b = is_bipartite(edges, directed=directed)
+    if not bip or not edges:
+        return False, []
+
+    adj = build_adjacency(edges, directed=False)
+    match: dict[str, str] = {}
+    
+    def dfs(u: str, visited: set[str]) -> bool:
+        for v in adj.get(u, []):
+            if v in visited:
+                continue
+            visited.add(v)
+            if v not in match or dfs(match[v], visited):
+                match[v] = u
+                match[u] = v
+                return True
+        return False
+
+    for u in grp_a:
+        if u not in match:
+            dfs(u, set())
+            
+    # Collect matched edges from original edge list to preserve weights/direction
+    result = []
+    seen = set()
+    for e in edges:
+        if (e.u, e.v) not in seen and (e.v, e.u) not in seen:
+            if match.get(e.u) == e.v or match.get(e.v) == e.u:
+                result.append(e)
+                seen.add((e.u, e.v))
+    return True, result
+
+
+def get_bandwidth(adj: dict[str, list[str]], ordering: list[str]) -> int:
+    if not ordering:
+        return 0
+    pos = {u: i for i, u in enumerate(ordering)}
+    bw = 0
+    for u in adj:
+        for v in adj[u]:
+            bw = max(bw, abs(pos[u] - pos[v]))
+    return bw
+
+
+def calculate_bandwidth(edges: list[GraphEdge], *, directed: bool) -> tuple[int, int, list[str]]:
+    adj = build_adjacency(edges, directed=False)
+    nodes = sorted(list(_nodes_from_edges(edges)))
+    
+    original_bw = get_bandwidth(adj, nodes)
+    
+    if not nodes:
+        return 0, 0, []
+        
+    visited = set()
+    rcm_order = []
+    degrees = {u: len(adj.get(u, [])) for u in nodes}
+    
+    for start_node in sorted(nodes, key=lambda x: (degrees[x], x)):
+        if start_node in visited:
+            continue
+            
+        component_order = []
+        q = deque([start_node])
+        visited.add(start_node)
+        
+        while q:
+            u = q.popleft()
+            component_order.append(u)
+            neighbors = sorted(adj.get(u, []), key=lambda x: (degrees[x], x))
+            for v in neighbors:
+                if v not in visited:
+                    visited.add(v)
+                    q.append(v)
+                    
+        rcm_order.extend(reversed(component_order))
+        
+    new_bw = get_bandwidth(adj, rcm_order)
+    return original_bw, new_bw, rcm_order

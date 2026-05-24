@@ -11,7 +11,9 @@ export type AlgorithmId =
   | "girth"
   | "dijkstra"
   | "prim"
-  | "kruskal";
+  | "kruskal"
+  | "matching"
+  | "bandwidth";
 
 export interface GraphEdgeInput {
   u: string;
@@ -40,6 +42,8 @@ export interface GraphModel {
 }
 
 export interface ConsoleLine {
-  type: "info" | "output" | "error" | "muted";
+  type: "info" | "output" | "error" | "muted" | "swap";
   text: string;
+  /** Optional metadata for swap lines: the old id and new id */
+  meta?: { from: string; to: string };
 }

@@ -485,7 +485,7 @@ export default function ControlSidebar({
                 cursor: isBusy ? "not-allowed" : "pointer",
               }}
             >
-              ▶ Simulasikan
+              ▶ Run
             </button>
 
             {/* Secondary button */}

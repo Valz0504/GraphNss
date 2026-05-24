@@ -17,6 +17,8 @@ from app.schemas.graph import (
     ShortestPathResponse,
     TraversalRequest,
     TraversalResponse,
+    MatchingResponse,
+    BandwidthResponse,
 )
 from app.services.graph_algorithms import (
     bfs_simulate,
@@ -31,6 +33,8 @@ from app.services.graph_algorithms import (
     largest_component,
     prim_mst,
     weakly_connected_components,
+    find_maximum_bipartite_matching,
+    calculate_bandwidth,
 )
 
 router = APIRouter()
@@ -225,3 +229,32 @@ async def run_kruskal(req: GraphRequest):
         node_count=node_count,
         is_spanning=is_spanning,
     )
+
+@router.post("/matching", response_model=MatchingResponse)
+async def get_maximum_matching(req: GraphRequest):
+    """Find maximum bipartite matching."""
+    try:
+        is_bip, matches = find_maximum_bipartite_matching(req.edges, directed=req.directed)
+        return MatchingResponse(
+            directed=req.directed,
+            is_bipartite=is_bip,
+            matches=matches,
+            size=len(matches),
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/bandwidth", response_model=BandwidthResponse)
+async def get_graph_bandwidth(req: GraphRequest):
+    """Calculate bandwidth and get RCM ordering."""
+    try:
+        orig, new_bw, order = calculate_bandwidth(req.edges, directed=req.directed)
+        return BandwidthResponse(
+            directed=req.directed,
+            original_bandwidth=orig,
+            new_bandwidth=new_bw,
+            node_ordering=order,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
