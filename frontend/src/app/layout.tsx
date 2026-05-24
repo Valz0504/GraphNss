@@ -40,7 +40,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="flex flex-col h-screen overflow-hidden"
+        className="flex flex-col h-dvh overflow-hidden"
         style={{ fontFamily: "var(--font-inter, Inter, sans-serif)" }}
       >
         <Navbar />
