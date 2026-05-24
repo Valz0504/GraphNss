@@ -799,7 +799,7 @@ export default function GridIslandShell() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-1 items-center justify-center px-8 text-center">
+            <div className="absolute inset-0 flex items-center justify-center px-8 text-center">
               <div className="flex max-w-md flex-col gap-2">
                 <p className="text-sm font-medium" style={{ color: "var(--text-subtle)" }}>
                   Belum ada grid
