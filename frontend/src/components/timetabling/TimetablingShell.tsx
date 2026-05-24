@@ -265,7 +265,7 @@ function TimetablingSidebar({
   return (
     <div
       className="flex h-full flex-col overflow-y-auto"
-      style={{ width: 320, background: "var(--bg-surface)", borderLeft: "1px solid var(--border)" }}
+      style={{ width: 320, background: "var(--bg-surface)", borderLeft: "1px solid var(--border)", boxShadow: "-4px 0 24px rgba(0,0,0,0.06)" }}
     >
       {/* Header */}
       <div
@@ -293,7 +293,7 @@ function TimetablingSidebar({
 
         {/* ── Preset ── */}
         <div className="flex flex-col gap-2">
-          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-subtle)" }}>
             Preset
           </p>
           <button
@@ -316,7 +316,7 @@ function TimetablingSidebar({
 
         {/* ── Dosen ── */}
         <div className="flex flex-col gap-2">
-          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-subtle)" }}>
             Dosen ({lecturers.length})
           </p>
 
@@ -384,7 +384,7 @@ function TimetablingSidebar({
 
         {/* ── Mata Kuliah ── */}
         <div className="flex flex-col gap-2">
-          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-subtle)" }}>
             Mata Kuliah ({courses.length})
           </p>
 
