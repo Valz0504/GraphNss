@@ -51,7 +51,7 @@ const TECH = [
 
 const MEMBERS = [
   { name: "Emilio Justin",      nim: "13524043", photo: "/emilio.webp", role: "Full-stack Dev" },
-  { name: "Tria Sania Oktavia", nim: "10122036", photo: "/tria.webp",   role: "Full-stack Dev" },
+  { name: "Tria Sania Oktavia", nim: "10122036", photo: "/tria.webp",   role: "Graph Algorithm Dev" },
 ] as const;
 
 function LogoImage() {
