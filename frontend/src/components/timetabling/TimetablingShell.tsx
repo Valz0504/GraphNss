@@ -28,18 +28,18 @@ function slotIdx(dayIdx: number, period: number) { return dayIdx * 4 + (period -
 
 /* ─── 12 distinct card colors (cycled by lecturer index) ─── */
 const LECTURER_PALETTE = [
-  { bg: "rgba(239,68,68,0.15)",   border: "rgba(239,68,68,0.45)",   text: "#f87171"  },
-  { bg: "rgba(59,130,246,0.15)",  border: "rgba(59,130,246,0.45)",  text: "#60a5fa"  },
-  { bg: "rgba(34,197,94,0.15)",   border: "rgba(34,197,94,0.45)",   text: "#4ade80"  },
-  { bg: "rgba(234,179,8,0.15)",   border: "rgba(234,179,8,0.45)",   text: "#facc15"  },
-  { bg: "rgba(168,85,247,0.15)",  border: "rgba(168,85,247,0.45)",  text: "#c084fc"  },
-  { bg: "rgba(249,115,22,0.15)",  border: "rgba(249,115,22,0.45)",  text: "#fb923c"  },
-  { bg: "rgba(20,184,166,0.15)",  border: "rgba(20,184,166,0.45)",  text: "#2dd4bf"  },
-  { bg: "rgba(236,72,153,0.15)",  border: "rgba(236,72,153,0.45)",  text: "#f472b6"  },
-  { bg: "rgba(99,102,241,0.15)",  border: "rgba(99,102,241,0.45)",  text: "#818cf8"  },
-  { bg: "rgba(16,185,129,0.15)",  border: "rgba(16,185,129,0.45)",  text: "#34d399"  },
-  { bg: "rgba(245,158,11,0.15)",  border: "rgba(245,158,11,0.45)",  text: "#fbbf24"  },
-  { bg: "rgba(244,114,182,0.15)", border: "rgba(244,114,182,0.45)", text: "#f9a8d4"  },
+  { bg: "rgba(239,68,68,0.15)",   border: "rgba(239,68,68,0.45)",   text: "#000000"  },
+  { bg: "rgba(59,130,246,0.15)",  border: "rgba(59,130,246,0.45)",  text: "#000000"  },
+  { bg: "rgba(34,197,94,0.15)",   border: "rgba(34,197,94,0.45)",   text: "#000000"  },
+  { bg: "rgba(234,179,8,0.15)",   border: "rgba(234,179,8,0.45)",   text: "#000000"  },
+  { bg: "rgba(168,85,247,0.15)",  border: "rgba(168,85,247,0.45)",  text: "#000000"  },
+  { bg: "rgba(249,115,22,0.15)",  border: "rgba(249,115,22,0.45)",  text: "#000000"  },
+  { bg: "rgba(20,184,166,0.15)",  border: "rgba(20,184,166,0.45)",  text: "#000000"  },
+  { bg: "rgba(236,72,153,0.15)",  border: "rgba(236,72,153,0.45)",  text: "#000000"  },
+  { bg: "rgba(99,102,241,0.15)",  border: "rgba(99,102,241,0.45)",  text: "#000000"  },
+  { bg: "rgba(16,185,129,0.15)",  border: "rgba(16,185,129,0.45)",  text: "#000000"  },
+  { bg: "rgba(245,158,11,0.15)",  border: "rgba(245,158,11,0.45)",  text: "#000000"  },
+  { bg: "rgba(244,114,182,0.15)", border: "rgba(244,114,182,0.45)", text: "#000000"  },
 ];
 
 /* ════════════════════════════════════════
