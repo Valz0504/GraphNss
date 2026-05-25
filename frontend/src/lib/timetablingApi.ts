@@ -21,6 +21,7 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
 export interface Lecturer {
   id: string;
   name: string;
+  unavailable_slots?: number[];  // slot indices 0-19 the lecturer cannot teach
 }
 
 export interface Course {
@@ -56,6 +57,11 @@ export interface ScheduleEntry {
   slot_day: string;
   slot_period: number;
   slot_label: string;
+  // Second meeting for 4-SKS courses (two 2-hour slots per week)
+  slot2_index: number | null;
+  slot2_day: string | null;
+  slot2_period: number | null;
+  slot2_label: string | null;
 }
 
 export interface TimetablingResponse {
