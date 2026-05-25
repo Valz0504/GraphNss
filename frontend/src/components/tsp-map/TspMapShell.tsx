@@ -114,7 +114,9 @@ function TspControlSidebar({
           </div>
         </div>
         {onClose && (
-          <button onClick={onClose} className="text-lg leading-none" style={{ color: "var(--text-muted)" }}>✕</button>
+          <button onClick={onClose}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-base leading-none transition-all hover:brightness-150 active:scale-90"
+            style={{ color: "var(--text-muted)", background: "var(--bg-raised)", border: "1px solid var(--border)" }}>✕</button>
         )}
       </div>
 
@@ -132,7 +134,7 @@ function TspControlSidebar({
                 key={opt.id}
                 disabled={isBusy}
                 onClick={() => onAlgorithmChange(opt.id)}
-                className="rounded-lg px-3 py-2 text-left transition-all"
+                className="rounded-lg px-3 py-2 text-left transition-all hover:brightness-110 active:scale-[0.98]"
                 style={{
                   background: active ? "rgba(220,38,38,0.08)" : "var(--bg-raised)",
                   border:     `1px solid ${active ? "rgba(220,38,38,0.45)" : "var(--border-strong)"}`,
@@ -200,7 +202,7 @@ function TspControlSidebar({
             <button
               disabled={isBusy}
               onClick={onAddFromDropdown}
-              className="shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-semibold transition-all"
+              className="shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-semibold transition-all hover:brightness-110 active:scale-[0.95]"
               style={{
                 background: "rgba(220,38,38,0.15)",
                 color:      "var(--primary-light)",
@@ -257,7 +259,7 @@ function TspControlSidebar({
                   <button
                     disabled={isBusy}
                     onClick={() => onRemoveCity(city.id)}
-                    className="shrink-0 mt-0.5 text-[11px] hover:brightness-150 transition-all"
+                    className="shrink-0 mt-0.5 flex h-5 w-5 items-center justify-center rounded text-[10px] transition-all hover:bg-red-500/20 hover:text-red-400 active:scale-90"
                     style={{ color: "var(--text-muted)", opacity: isBusy ? 0.4 : 1 }}
                   >
                     ✕
@@ -272,32 +274,38 @@ function TspControlSidebar({
 
         {/* ── Controls ── */}
         <div className="flex flex-col gap-2">
-          <button
-            disabled={!canSolve}
-            onClick={onSolve}
-            className="w-full rounded-lg py-2.5 text-sm font-semibold transition-all"
-            style={{
-              background: canSolve
-                ? "linear-gradient(135deg, var(--primary), var(--primary-dark))"
-                : "var(--bg-overlay)",
-              color:      canSolve ? "#fff" : "var(--text-muted)",
-              cursor:     canSolve ? "pointer" : "not-allowed",
-              boxShadow:  canSolve ? "0 4px 14px rgba(220,38,38,0.4)" : "none",
-            }}
-          >
-            {isBusy ? "Menjalankan…" : "Selesaikan TSP"}
-          </button>
+          <div className="relative">
+            {canSolve && !isBusy && (
+              <span className="pointer-events-none absolute inset-0 rounded-lg animate-pulse-soft"
+                style={{ boxShadow: "0 0 0 3px rgba(220,38,38,0.25)" }} />
+            )}
+            <button
+              disabled={!canSolve}
+              onClick={onSolve}
+              className="relative w-full rounded-lg py-2.5 text-sm font-semibold transition-all hover:brightness-110 active:scale-[0.98]"
+              style={{
+                background: canSolve
+                  ? "linear-gradient(135deg, var(--primary), var(--primary-dark))"
+                  : "var(--bg-overlay)",
+                color:      canSolve ? "#fff" : "var(--text-muted)",
+                cursor:     canSolve ? "pointer" : "not-allowed",
+                boxShadow:  canSolve ? "0 4px 14px rgba(220,38,38,0.4)" : "none",
+              }}
+            >
+              {isBusy ? "Menjalankan…" : "Selesaikan TSP"}
+            </button>
+          </div>
           <div className="flex gap-2">
             <button
               onClick={onReset}
-              className="flex-1 rounded-lg py-1.5 text-xs font-medium hover:brightness-110"
+              className="flex-1 rounded-lg py-1.5 text-xs font-medium transition-all hover:brightness-110 active:scale-[0.97]"
               style={{ background: "var(--bg-raised)", color: "var(--text-base)", border: "1px solid var(--border-strong)" }}
             >
               Reset Rute
             </button>
             <button
               onClick={onClearAll}
-              className="flex-1 rounded-lg py-1.5 text-xs font-medium hover:brightness-110"
+              className="flex-1 rounded-lg py-1.5 text-xs font-medium transition-all hover:brightness-110 active:scale-[0.97]"
               style={{ background: "var(--bg-raised)", color: "var(--text-base)", border: "1px solid var(--border-strong)" }}
             >
               Hapus Semua

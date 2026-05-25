@@ -7,6 +7,7 @@ from typing import Literal
 class Lecturer(BaseModel):
     id: str
     name: str
+    unavailable_slots: list[int] = Field(default_factory=list)  # slot indices 0-19
 
 
 class Course(BaseModel):
@@ -27,12 +28,17 @@ class ScheduleStep(BaseModel):
     course_id: str
     course_name: str
     lecturer_name: str
-    slot_index: int        # 0-19 (day*4 + period)
+    slot_index: int        # 0-19
     slot_day: str
     slot_period: int       # 1-4
-    slot_label: str        # e.g. "07:00–09:40"
-    degree: int            # edges in conflict graph
-    saturation: int        # DSATUR saturation at time of assignment
+    slot_label: str
+    degree: int
+    saturation: int
+    # For 4-SKS courses: second weekly meeting
+    slot2_index: int | None = None
+    slot2_day: str | None = None
+    slot2_period: int | None = None
+    slot2_label: str | None = None
 
 
 class ScheduleEntry(BaseModel):
@@ -46,6 +52,11 @@ class ScheduleEntry(BaseModel):
     slot_day: str
     slot_period: int
     slot_label: str
+    # For 4-SKS courses: second weekly meeting
+    slot2_index: int | None = None
+    slot2_day: str | None = None
+    slot2_period: int | None = None
+    slot2_label: str | None = None
 
 
 class TimetablingResponse(BaseModel):

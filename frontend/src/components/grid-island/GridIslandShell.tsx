@@ -166,7 +166,9 @@ function GridIslandSidebar({
             Editor
           </span>
           {onClose && (
-            <button onClick={onClose} className="text-lg leading-none" style={{ color: "var(--text-muted)" }}>
+            <button onClick={onClose}
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-base leading-none transition-all hover:brightness-150 active:scale-90"
+              style={{ color: "var(--text-muted)", background: "var(--bg-raised)", border: "1px solid var(--border)" }}>
               ✕
             </button>
           )}
@@ -762,6 +764,9 @@ export default function GridIslandShell() {
           ref={viewportRef}
           className="bg-dot-grid relative flex-1 overflow-hidden"
         >
+          {/* Radial ambient glow */}
+          <div className="pointer-events-none absolute inset-0"
+            style={{ background: "radial-gradient(ellipse 55% 45% at 50% 50%, rgba(220,38,38,0.07) 0%, transparent 70%)" }} />
           {grid ? (
             <div className="absolute inset-0 overflow-auto">
               <div
@@ -800,17 +805,20 @@ export default function GridIslandShell() {
             </div>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center px-8 text-center">
-              <div className="flex max-w-md flex-col gap-2">
-                <p className="text-sm font-medium" style={{ color: "var(--text-subtle)" }}>
-                  Belum ada grid
-                </p>
-                <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-                  Upload file{" "}
-                  <span style={{ color: "var(--primary-light)" }}>.txt</span>{" "}
-                  atau buat grid dari ukuran, lalu klik sel untuk toggle{" "}
-                  <span style={{ color: "var(--text-subtle)" }}>air(0)</span> dan{" "}
-                  <span style={{ color: "var(--text-subtle)" }}>daratan(1)</span>.
-                </p>
+              <div className="animate-fade-in flex max-w-md flex-col items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl text-lg font-bold"
+                  style={{ background: "rgba(220,38,38,0.1)", border: "1px solid rgba(220,38,38,0.2)", color: "var(--primary-light)" }}>
+                  ▦
+                </div>
+                <div className="flex flex-col gap-1">
+                  <p className="text-sm font-medium" style={{ color: "var(--text-subtle)" }}>Belum ada grid</p>
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    Upload file <span style={{ color: "var(--primary-light)" }}>.txt</span> atau buat grid dari
+                    ukuran, lalu klik sel untuk toggle{" "}
+                    <span style={{ color: "var(--text-subtle)" }}>air(0)</span> dan{" "}
+                    <span style={{ color: "var(--text-subtle)" }}>daratan(1)</span>.
+                  </p>
+                </div>
               </div>
             </div>
           )}

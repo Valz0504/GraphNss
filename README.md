@@ -46,6 +46,6 @@ docker compose up --build
 | Layer     | Technology              |
 |-----------|-------------------------|
 | Frontend  | Next.js 15, Tailwind CSS, TypeScript |
-| Backend   | Python 3.11+, FastAPI, uv |
+| Backend   | Python 3.12, FastAPI, uv  |
 | Dev Tools | Ruff, Pytest, ESLint     |
 | Container | Docker, Docker Compose   |

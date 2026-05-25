@@ -26,7 +26,7 @@ export default function Navbar() {
         {/* ── Logo ── */}
         <Link href="/basic-graph" className="flex shrink-0 items-center gap-2.5 w-36 md:w-44">
           <Image
-            src="/logo.png"
+            src="/logo.webp"
             alt="GraphNss Logo"
             width={28}
             height={28}
@@ -65,7 +65,7 @@ export default function Navbar() {
             className="rounded px-2 py-0.5 text-[11px] font-medium"
             style={{ color: "rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}
           >
-            v1.0
+            v1.1
           </span>
         </div>
 
