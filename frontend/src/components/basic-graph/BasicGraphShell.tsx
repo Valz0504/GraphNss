@@ -80,26 +80,6 @@ function CanvasArea({
             </p>
           </div>
 
-          {/* Mobile/Tablet: open controls button */}
-          {onOpenControls && (
-            <button
-              type="button"
-              onClick={onOpenControls}
-              className="lg:hidden flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all hover:brightness-110 active:scale-95"
-              style={{
-                background: "linear-gradient(135deg, var(--primary), var(--primary-dark))",
-                color: "#fff",
-                boxShadow: "0 4px 14px rgba(220,38,38,0.4)",
-              }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
-                <circle cx="12" cy="12" r="3" />
-                <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
-              </svg>
-              Buka Panel Kontrol
-            </button>
-          )}
-
           <span
             className="rounded px-2 py-0.5 text-[10px] font-mono"
             style={{

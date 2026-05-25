@@ -24,9 +24,9 @@ export const metadata: Metadata = {
     "Interactive graph theory algorithm visualizer. Explore DFS, BFS, Dijkstra, MST, and more with step-by-step animation.",
   keywords: ["graph theory", "algorithm visualizer", "DFS", "BFS", "Dijkstra"],
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
+    icon: "/logo.webp",
+    shortcut: "/logo.webp",
+    apple: "/logo.webp",
   },
 };
 
