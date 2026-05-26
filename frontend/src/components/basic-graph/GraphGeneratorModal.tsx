@@ -134,7 +134,7 @@ export default function GraphGeneratorModal({ isOpen, onClose, onGenerate }: Pro
 
       {/* Modal Card */}
       <div
-        className="relative flex w-full max-w-2xl flex-col rounded-2xl shadow-2xl animate-fade-in"
+        className="relative flex w-full flex-col rounded-2xl shadow-2xl animate-fade-in mx-4 sm:mx-0 sm:max-w-2xl md:max-w-3xl"
         style={{
           background: "var(--bg-surface)",
           border: "1px solid var(--border-strong)",
@@ -142,12 +142,12 @@ export default function GraphGeneratorModal({ isOpen, onClose, onGenerate }: Pro
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4" style={{ borderColor: "var(--border)" }}>
+        <div className="flex items-center justify-between border-b px-4 py-3 sm:px-6 sm:py-4" style={{ borderColor: "var(--border)" }}>
           <div>
-            <h2 className="text-lg font-bold" style={{ color: "var(--text-base)" }}>
-              Special Graph
+            <h2 className="text-base font-bold sm:text-lg" style={{ color: "var(--text-base)" }}>
+              Graph Library
             </h2>
-            <p className="text-[13px]" style={{ color: "var(--text-muted)" }}>
+            <p className="text-[12px] sm:text-[13px]" style={{ color: "var(--text-muted)" }}>
               Pilih kelas graf dan sesuaikan parameternya.
             </p>
           </div>
@@ -161,9 +161,12 @@ export default function GraphGeneratorModal({ isOpen, onClose, onGenerate }: Pro
         </div>
 
         {/* Content */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Left: List */}
-          <div className="w-1/2 overflow-y-auto border-r p-3" style={{ borderColor: "var(--border)" }}>
+        <div className="flex flex-1 overflow-hidden min-h-0 flex-col lg:flex-row">
+          {/* List — scrollable; on mobile/tablet capped height, on desktop fills column */}
+          <div
+            className="overflow-y-auto border-b lg:border-b-0 lg:border-r p-3 lg:w-1/2 max-h-44 md:max-h-64 lg:max-h-none"
+            style={{ borderColor: "var(--border)" }}
+          >
             <div className="flex flex-col gap-1">
               {GENERATORS.map((g) => {
                 const isActive = g.id === selectedId;
@@ -192,9 +195,9 @@ export default function GraphGeneratorModal({ isOpen, onClose, onGenerate }: Pro
             </div>
           </div>
 
-          {/* Right: Params */}
-          <div className="flex w-1/2 flex-col justify-between p-6">
-            <div className="flex flex-col gap-5">
+          {/* Params */}
+          <div className="flex flex-col justify-between overflow-y-auto p-4 lg:w-1/2 lg:p-6">
+            <div className="flex flex-col gap-4 lg:gap-5">
               <h3 className="text-base font-semibold text-white">{currentMeta.name}</h3>
 
               {currentMeta.params.length === 0 ? (
@@ -209,19 +212,20 @@ export default function GraphGeneratorModal({ isOpen, onClose, onGenerate }: Pro
                         {p.label} (Min: {p.min}, Max: {p.max})
                       </label>
                       <input
-                        type="number"
-                        min={p.min}
-                        max={p.max}
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         value={paramVals[p.key] ?? p.default}
                         onChange={(e) => {
                           const val = parseInt(e.target.value, 10);
                           setParamVals((prev) => ({ ...prev, [p.key]: isNaN(val) ? p.default : val }));
                         }}
-                        className="w-full rounded-md px-3 py-2 text-sm"
+                        className="w-full rounded-md px-3 py-2"
                         style={{
                           background: "var(--bg-raised)",
                           border: "1px solid var(--border)",
                           color: "var(--text-base)",
+                          fontSize: "16px",
                         }}
                       />
                     </div>
@@ -231,7 +235,7 @@ export default function GraphGeneratorModal({ isOpen, onClose, onGenerate }: Pro
             </div>
 
             {/* Actions */}
-            <div className="mt-8 flex gap-3">
+            <div className="mt-4 flex gap-3 lg:mt-8">
               <button
                 onClick={onClose}
                 className="flex-1 rounded-lg py-2.5 text-sm font-medium transition-all hover:brightness-125"
