@@ -65,7 +65,7 @@ export default function Navbar() {
             className="rounded px-2 py-0.5 text-[11px] font-medium"
             style={{ color: "rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}
           >
-            v1.1
+            v1.2
           </span>
         </div>
 
@@ -104,13 +104,13 @@ export default function Navbar() {
         <>
           {/* Backdrop */}
           <div
-            className="md:hidden fixed inset-0 z-40"
+            className="md:hidden fixed inset-0 z-70"
             style={{ top: "var(--navbar-h)", background: "rgba(0,0,0,0.35)", backdropFilter: "blur(4px)" }}
             onClick={() => setMobileOpen(false)}
           />
           {/* Menu panel */}
           <nav
-            className="md:hidden fixed inset-x-0 z-40 flex flex-col gap-1 px-4 py-3"
+            className="md:hidden fixed inset-x-0 z-70 flex flex-col gap-1 px-4 py-3"
             style={{
               top: "var(--navbar-h)",
               background: "#1f2937",

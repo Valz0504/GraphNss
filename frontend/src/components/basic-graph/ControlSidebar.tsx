@@ -320,7 +320,7 @@ export default function ControlSidebar({
                     border: "1px solid rgba(220,38,38,0.4)",
                   }}
                 >
-                  Special Graph
+                  Graph Library
                 </button>
                 {/* Upload .txt button */}
                 <button
