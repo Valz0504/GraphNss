@@ -50,9 +50,15 @@ const TECH = [
 ] as const;
 
 const MEMBERS = [
-  { name: "Emilio Justin",      nim: "13524043", photo: "/emilio.webp", role: "Full-stack Dev" },
-  { name: "Tria Sania Oktavia", nim: "10122036", photo: "/tria.webp",   role: "Graph Algorithm Dev" },
-] as const;
+  { name: "Emilio Justin",      nim: "13524043", photo: "/emilio.webp", role: "Full-stack Dev",        link: "https://www.linkedin.com/in/emilio-justin" },
+  { name: "Tria Sania Oktavia", nim: "10122036", photo: "/tria.webp",   role: "Graph Algorithm Dev",   link: "https://www.linkedin.com/in/triasania" },
+];
+
+const LECTURER = {
+  name:  "Prof. Edy Tri Baskoro, M.Sc., Ph.D.",
+  role:  "Dosen Pengampu",
+  photo: "/pakedy.webp",
+};
 
 function LogoImage() {
   const [loaded, setLoaded] = useState(false);
@@ -174,46 +180,102 @@ export default function AboutShell() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-            {MEMBERS.map((m) => (
-              <div key={m.nim}
-                className="group relative flex flex-col items-center gap-4 rounded-xl py-8 px-6 transition-all hover:scale-[1.02]"
-                style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
-                {/* Hover glow */}
-                <div className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity group-hover:opacity-100"
-                  style={{ boxShadow: "inset 0 0 0 1px rgba(220,38,38,0.3), 0 0 24px rgba(220,38,38,0.08)" }} />
+            {MEMBERS.map((m) => {
+              const inner = (
+                <>
+                  {/* Hover glow */}
+                  <div className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity group-hover:opacity-100"
+                    style={{ boxShadow: "inset 0 0 0 1px rgba(220,38,38,0.3), 0 0 24px rgba(220,38,38,0.08)" }} />
 
-                {/* Photo */}
-                {m.photo ? (
-                  <div className="relative">
-                    <div className="absolute -inset-1 rounded-full opacity-0 transition-opacity group-hover:opacity-100"
-                      style={{ background: "rgba(220,38,38,0.15)", filter: "blur(8px)" }} />
-                    <Image src={m.photo} alt={m.name} width={112} height={112}
-                      className="relative rounded-full object-cover transition-all group-hover:scale-105"
-                      style={{ border: "2px solid var(--border-strong)" }}
-                      unoptimized />
-                  </div>
-                ) : (
-                  <div className="h-28 w-28 rounded-full flex items-center justify-center text-xs"
-                    style={{ background: "var(--bg-raised)", border: "2px dashed var(--border-strong)", color: "var(--text-muted)" }}>
-                    foto
-                  </div>
-                )}
+                  {/* Photo */}
+                  {m.photo ? (
+                    <div className="relative">
+                      <div className="absolute -inset-1 rounded-full opacity-0 transition-opacity group-hover:opacity-100"
+                        style={{ background: "rgba(220,38,38,0.15)", filter: "blur(8px)" }} />
+                      <Image src={m.photo} alt={m.name} width={112} height={112}
+                        className="relative rounded-full object-cover transition-all group-hover:scale-105"
+                        style={{ border: "2px solid var(--border-strong)" }}
+                        unoptimized />
+                    </div>
+                  ) : (
+                    <div className="h-28 w-28 rounded-full flex items-center justify-center text-xs"
+                      style={{ background: "var(--bg-raised)", border: "2px dashed var(--border-strong)", color: "var(--text-muted)" }}>
+                      foto
+                    </div>
+                  )}
 
-                <div className="flex flex-col items-center gap-1 text-center">
-                  <span className="text-sm font-semibold" style={{ color: "var(--text-base)" }}>{m.name}</span>
-                  <span className="text-[10px] font-medium uppercase tracking-widest" style={{ color: "var(--primary-light)" }}>
-                    {m.role}
-                  </span>
-                  <span className="text-xs font-mono mt-0.5" style={{ color: "var(--text-muted)" }}>{m.nim}</span>
+                  <div className="flex flex-col items-center gap-1 text-center">
+                    <span className="text-sm font-semibold" style={{ color: "var(--text-base)" }}>{m.name}</span>
+                    <span className="text-[10px] font-medium uppercase tracking-widest" style={{ color: "var(--primary-light)" }}>
+                      {m.role}
+                    </span>
+                    <span className="text-xs font-mono mt-0.5" style={{ color: "var(--text-muted)" }}>{m.nim}</span>
+                  </div>
+                </>
+              );
+
+              const sharedClass = "group relative flex flex-col items-center gap-4 rounded-xl py-8 px-6 transition-all hover:scale-[1.02]";
+              const sharedStyle = { background: "var(--bg-surface)", border: "1px solid var(--border)" };
+
+              return m.link ? (
+                <a key={m.nim} href={m.link} target="_blank" rel="noopener noreferrer" className={sharedClass} style={sharedStyle}>
+                  {inner}
+                </a>
+              ) : (
+                <div key={m.nim} className={sharedClass} style={sharedStyle}>
+                  {inner}
                 </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ── Divider ── */}
+        <div style={{ height: 1, background: "var(--border)" }} />
+
+        {/* ── Lecturer ── */}
+        <section className="animate-fade-in flex flex-col items-center gap-6">
+          <div className="flex flex-col items-center gap-1 text-center">
+            <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#fbbf24" }}>
+              Lecturer
+            </h2>
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+              MA3052 - Teori Graf Algoritmik
+            </p>
+          </div>
+
+          <div className="w-full max-w-xs mx-auto">
+            <div
+              className="group relative flex flex-col items-center gap-4 rounded-xl py-8 px-6 transition-all hover:scale-[1.02]"
+              style={{ background: "var(--bg-surface)", border: "1px solid rgba(245,158,11,0.25)" }}
+            >
+              {/* Hover glow */}
+              <div className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity group-hover:opacity-100"
+                style={{ boxShadow: "inset 0 0 0 1px rgba(245,158,11,0.35), 0 0 28px rgba(245,158,11,0.1)" }} />
+
+              {/* Photo */}
+              <div className="relative">
+                <div className="absolute -inset-1 rounded-full opacity-0 transition-opacity group-hover:opacity-100"
+                  style={{ background: "rgba(245,158,11,0.2)", filter: "blur(10px)" }} />
+                <Image src={LECTURER.photo} alt={LECTURER.name} width={120} height={120}
+                  className="relative rounded-full object-cover transition-all group-hover:scale-105"
+                  style={{ border: "2px solid rgba(245,158,11,0.4)" }}
+                  unoptimized />
               </div>
-            ))}
+
+              <div className="flex flex-col items-center gap-1 text-center">
+                <span className="text-sm font-semibold" style={{ color: "var(--text-base)" }}>{LECTURER.name}</span>
+                <span className="text-[10px] font-medium uppercase tracking-widest" style={{ color: "#fbbf24" }}>
+                  {LECTURER.role}
+                </span>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* ── Footer note ── */}
         <p className="text-center text-[11px]" style={{ color: "var(--text-muted)" }}>
-          GraphNss v1.1 — Institut Teknologi Bandung
+          GraphNss v1.2 — Institut Teknologi Bandung
         </p>
 
       </div>
