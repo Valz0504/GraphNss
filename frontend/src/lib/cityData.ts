@@ -15,6 +15,21 @@ export interface CountryData {
   regions: RegionData[];
 }
 
+export interface IslandGroup {
+  name: string;
+  emoji: string;
+  regionNames: string[];
+}
+
+export const INDONESIA_ISLANDS: IslandGroup[] = [
+  { name: "Sumatera",            emoji: "", regionNames: ["Aceh", "Sumatera Utara", "Sumatera Barat", "Riau & Kepri", "Jambi & Bengkulu", "Sumatera Selatan & Babel", "Lampung & Banten"] },
+  { name: "Jawa",                emoji: "", regionNames: ["DKI Jakarta", "Jawa Barat", "Jawa Tengah", "DI Yogyakarta", "Jawa Timur"] },
+  { name: "Bali & Nusa Tenggara",emoji: "", regionNames: ["Bali", "NTB", "NTT"] },
+  { name: "Kalimantan",          emoji: "", regionNames: ["Kalimantan Barat", "Kalimantan Tengah", "Kalimantan Selatan", "Kalimantan Timur & Utara"] },
+  { name: "Sulawesi",            emoji: "", regionNames: ["Sulawesi Utara & Gorontalo", "Sulawesi Tengah & Barat", "Sulawesi Selatan", "Sulawesi Tenggara"] },
+  { name: "Maluku & Papua",      emoji: "", regionNames: ["Maluku & Maluku Utara", "Papua", "Papua Barat"] },
+];
+
 export const COUNTRY_DATA: CountryData[] = [
   // ── INDONESIA ─────────────────────────────────────────────────────────────
   {
