@@ -12,6 +12,35 @@ import {
 } from "@/lib/gridIslandApi";
 
 import { createGrid, parseGridText, type GridCell, type GridModel } from "./gridParsing";
+import HelpModal from "@/components/layout/HelpModal";
+import type { HelpSection } from "@/components/layout/HelpModal";
+
+const HELP_SECTIONS: HelpSection[] = [
+  {
+    title: "Input Grid",
+    items: [
+      "Upload file .txt berisi baris-baris angka 0 dan 1 dipisah spasi. Contoh baris: 0 1 1 0",
+      "Atau tentukan ukuran grid (baris × kolom) lalu klik Buat Grid untuk membuat grid kosong.",
+      "Klik sel mana saja untuk toggle antara air (0, gelap) dan daratan (1, merah).",
+    ],
+  },
+  {
+    title: "Hitung & Traversal",
+    items: [
+      "Hitung Islands: menghitung jumlah pulau secara instan tanpa animasi.",
+      "Run Traversal (BFS/DFS): menjalankan flood-fill dengan animasi step-by-step. Setiap pulau dikunjungi dengan urutan berbeda.",
+      "Output urutan kunjungan sel tampil di konsol bawah secara real-time.",
+    ],
+  },
+  {
+    title: "Tips",
+    items: [
+      "Sel yang sudah dikunjungi akan berubah warna selama animasi berlangsung.",
+      "Tekan Reset Grid untuk mengosongkan semua sel tanpa mengubah ukuran grid.",
+      "Tekan Reset untuk mengembalikan semua ke kondisi awal.",
+    ],
+  },
+];
 
 function Divider() {
   return <div style={{ height: "1px", background: "var(--border)", flexShrink: 0 }} />;
@@ -439,6 +468,8 @@ export default function GridIslandShell() {
   const [, setActiveIsland] = useState<number | null>(null);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [lines, setLines] = useState<ConsoleLine[]>([
     { type: "info",  text: "Grid Island siap." },
@@ -758,7 +789,7 @@ export default function GridIslandShell() {
   return (
     <div className="relative flex h-full overflow-hidden">
       {/* Main area: grid + console */}
-      <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* Grid viewport */}
         <div
           ref={viewportRef}
@@ -845,10 +876,40 @@ export default function GridIslandShell() {
         </div>
 
         <ConsolePanel lines={lines} />
+
+        {/* Desktop right-edge button group: toggle + help */}
+        <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 flex-col gap-1">
+          <button
+            type="button"
+            onClick={() => setSidebarOpen((p) => !p)}
+            className="flex items-center justify-center rounded-l-lg transition-all hover:brightness-125 active:scale-95"
+            title={sidebarOpen ? "Sembunyikan sidebar" : "Tampilkan sidebar"}
+            style={{ width: 18, height: 44, background: "var(--bg-surface)", borderTop: "1px solid var(--border-strong)", borderBottom: "1px solid var(--border-strong)", borderLeft: "1px solid var(--border-strong)", color: "var(--text-muted)", boxShadow: "-2px 2px 8px rgba(0,0,0,0.12)" }}
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              {sidebarOpen ? <polyline points="3,2 7,5 3,8" /> : <polyline points="7,2 3,5 7,8" />}
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => setHelpOpen(true)}
+            className="flex items-center justify-center rounded-l-lg transition-all hover:brightness-125 active:scale-95"
+            title="Cara pakai"
+            style={{ width: 18, height: 28, background: "var(--bg-surface)", borderTop: "1px solid var(--border-strong)", borderBottom: "1px solid var(--border-strong)", borderLeft: "1px solid var(--border-strong)", color: "var(--text-muted)", boxShadow: "-2px 2px 8px rgba(0,0,0,0.12)", fontSize: 10 }}
+          >
+            ?
+          </button>
+        </div>
       </main>
 
-      {/* Desktop sidebar (right, always visible lg+) */}
-      <div className="hidden lg:flex">
+      {/* Desktop sidebar (right, collapsible lg+) */}
+      <div
+        className="hidden lg:flex overflow-hidden shrink-0"
+        style={{
+          maxWidth: sidebarOpen ? "320px" : "0px",
+          transition: "max-width 0.3s cubic-bezier(0.16,1,0.3,1)",
+        }}
+      >
         <GridIslandSidebar {...sidebarProps} />
       </div>
 
@@ -873,25 +934,39 @@ export default function GridIslandShell() {
         </>
       )}
 
-      {/* Mobile toggle button */}
-      {!drawerOpen && (
+      {/* Mobile/Tablet: floating button group */}
+      <div className="lg:hidden fixed bottom-6 right-5 z-30 flex items-center gap-2">
         <button
           type="button"
-          onClick={() => setDrawerOpen(true)}
-          className="lg:hidden fixed bottom-6 right-5 z-30 flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110 active:scale-95"
-          style={{
-            background: "linear-gradient(135deg, var(--primary), var(--primary-dark))",
-            boxShadow: "0 4px 20px rgba(220,38,38,0.5)",
-          }}
+          onClick={() => setHelpOpen(true)}
+          className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold shadow-lg transition-all hover:brightness-110 active:scale-95"
+          style={{ background: "var(--bg-surface)", border: "1px solid var(--border-strong)", color: "var(--text-base)", boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
-            <line x1="3" y1="6"  x2="21" y2="6"  />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="15" y2="18" />
-          </svg>
-          Kontrol
+          ?
         </button>
-      )}
+        {!drawerOpen && (
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(true)}
+            className="flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110 active:scale-95"
+            style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-dark))", boxShadow: "0 4px 20px rgba(220,38,38,0.5)" }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
+              <line x1="3" y1="6"  x2="21" y2="6"  />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="15" y2="18" />
+            </svg>
+            Kontrol
+          </button>
+        )}
+      </div>
+
+      <HelpModal
+        isOpen={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        pageTitle="Grid Island"
+        sections={HELP_SECTIONS}
+      />
     </div>
   );
 }

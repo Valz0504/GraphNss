@@ -11,6 +11,35 @@ import {
   type ScheduleEntry,
   type TimetablingAlgorithm,
 } from "@/lib/timetablingApi";
+import HelpModal from "@/components/layout/HelpModal";
+import type { HelpSection } from "@/components/layout/HelpModal";
+
+const HELP_SECTIONS: HelpSection[] = [
+  {
+    title: "Data & Preset",
+    items: [
+      "Klik Muat Data Contoh untuk memuat preset jadwal Teknik Informatika atau Matematika ITB.",
+      "Tambah dosen baru dengan nama, lalu tambah mata kuliah dengan nama, SKS, semester, dan dosen pengampu.",
+      "Klik ikon kalender pada dosen untuk mengatur slot waktu yang tersedia (hari & periode).",
+    ],
+  },
+  {
+    title: "Jadwalkan Otomatis",
+    items: [
+      "Tekan Jadwalkan Otomatis untuk menjalankan algoritma DSATUR (graph coloring).",
+      "Algoritma memastikan tidak ada konflik: dosen yang sama tidak mengajar di slot yang sama, dan mata kuliah semester yang sama tidak bertabrakan.",
+      "Hasil ditampilkan sebagai timetable grid (hari × periode) dengan warna per dosen.",
+    ],
+  },
+  {
+    title: "Timetable Grid",
+    items: [
+      "Setiap warna mewakili satu dosen. Hover kartu untuk melihat detail mata kuliah.",
+      "Toggle visibilitas per dosen dengan klik nama dosen di sidebar untuk fokus pada jadwal tertentu.",
+      "Tekan Reset untuk menghapus semua data dan jadwal.",
+    ],
+  },
+];
 
 /* ─── Time slot grid (5 days × 4 periods) ─── */
 const DAYS      = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
@@ -737,6 +766,8 @@ export default function TimetablingShell() {
   const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set());
   const [isBusy,     setIsBusy]     = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const [presetDept, setPresetDept] = useState<"IF" | "MA">("IF");
   const [lecturerAvailability, setLecturerAvailability] = useState<Map<string, Set<number>>>(new Map());
@@ -936,7 +967,7 @@ export default function TimetablingShell() {
     <div className="relative flex h-full overflow-hidden">
 
       {/* ── Main: Timetable + Console ── */}
-      <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
 
         {/* Timetable area */}
         <div className="bg-dot-grid relative flex-1 overflow-hidden">
@@ -981,10 +1012,40 @@ export default function TimetablingShell() {
         </div>
 
         <ConsolePanel lines={lines} />
+
+        {/* Desktop right-edge button group: toggle + help */}
+        <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 flex-col gap-1">
+          <button
+            type="button"
+            onClick={() => setSidebarOpen((p) => !p)}
+            className="flex items-center justify-center rounded-l-lg transition-all hover:brightness-125 active:scale-95"
+            title={sidebarOpen ? "Sembunyikan sidebar" : "Tampilkan sidebar"}
+            style={{ width: 18, height: 44, background: "var(--bg-surface)", borderTop: "1px solid var(--border-strong)", borderBottom: "1px solid var(--border-strong)", borderLeft: "1px solid var(--border-strong)", color: "var(--text-muted)", boxShadow: "-2px 2px 8px rgba(0,0,0,0.12)" }}
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              {sidebarOpen ? <polyline points="3,2 7,5 3,8" /> : <polyline points="7,2 3,5 7,8" />}
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => setHelpOpen(true)}
+            className="flex items-center justify-center rounded-l-lg transition-all hover:brightness-125 active:scale-95"
+            title="Cara pakai"
+            style={{ width: 18, height: 28, background: "var(--bg-surface)", borderTop: "1px solid var(--border-strong)", borderBottom: "1px solid var(--border-strong)", borderLeft: "1px solid var(--border-strong)", color: "var(--text-muted)", boxShadow: "-2px 2px 8px rgba(0,0,0,0.12)", fontSize: 10 }}
+          >
+            ?
+          </button>
+        </div>
       </main>
 
-      {/* ── Desktop sidebar ── */}
-      <div className="hidden lg:flex h-full">
+      {/* ── Desktop sidebar (collapsible lg+) ── */}
+      <div
+        className="hidden lg:flex h-full overflow-hidden shrink-0"
+        style={{
+          maxWidth: sidebarOpen ? "320px" : "0px",
+          transition: "max-width 0.3s cubic-bezier(0.16,1,0.3,1)",
+        }}
+      >
         <TimetablingSidebar {...sidebarProps} />
       </div>
 
@@ -1001,18 +1062,34 @@ export default function TimetablingShell() {
         </>
       )}
 
-      {/* ── Mobile toggle button ── */}
-      {!drawerOpen && (
-        <button type="button" onClick={() => setDrawerOpen(true)}
-          className="lg:hidden fixed bottom-6 right-5 z-30 flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110 active:scale-95"
-          style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-dark))", boxShadow: "0 4px 20px rgba(220,38,38,0.5)" }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
-            <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="15" y2="18" />
-          </svg>
-          Kontrol
+      {/* ── Mobile/Tablet: floating button group ── */}
+      <div className="lg:hidden fixed bottom-6 right-5 z-30 flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setHelpOpen(true)}
+          className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold shadow-lg transition-all hover:brightness-110 active:scale-95"
+          style={{ background: "var(--bg-surface)", border: "1px solid var(--border-strong)", color: "var(--text-base)", boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}
+        >
+          ?
         </button>
-      )}
+        {!drawerOpen && (
+          <button type="button" onClick={() => setDrawerOpen(true)}
+            className="flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110 active:scale-95"
+            style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-dark))", boxShadow: "0 4px 20px rgba(220,38,38,0.5)" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
+              <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="15" y2="18" />
+            </svg>
+            Kontrol
+          </button>
+        )}
+      </div>
 
+      <HelpModal
+        isOpen={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        pageTitle="Timetabling"
+        sections={HELP_SECTIONS}
+      />
     </div>
   );
 }

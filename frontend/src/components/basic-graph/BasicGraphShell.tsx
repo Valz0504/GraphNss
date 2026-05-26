@@ -8,6 +8,44 @@ import ConsolePanel from "./ConsolePanel";
 import GraphCanvas from "./GraphCanvas";
 import { buildEdgeModels, computeInitialLayout, parseEdgeList } from "./graphParsing";
 import type { AlgorithmId, ConsoleLine, GraphModel } from "./types";
+import HelpModal from "@/components/layout/HelpModal";
+import type { HelpSection } from "@/components/layout/HelpModal";
+
+const HELP_SECTIONS: HelpSection[] = [
+  {
+    title: "Input Graf",
+    items: [
+      "Ketik edge list dengan format: u v [w] — satu edge per baris. Contoh: 1 2 5",
+      "Graf langsung dirender secara otomatis saat mengetik (debounce 350ms).",
+      "Toggle Directed untuk graf berarah, toggle Weighted untuk mengaktifkan bobot.",
+      "Upload file .txt untuk mengimpor edge list dari luar.",
+    ],
+  },
+  {
+    title: "Graph Library",
+    items: [
+      "Generate graf standar: Graf Lengkap, Bipartit, Siklus, Pohon, Petersen, Hypercube, dan lainnya.",
+      "Sesuaikan parameter (n, m, k) sesuai kebutuhan, lalu klik Buat Graf.",
+    ],
+  },
+  {
+    title: "Algoritma",
+    items: [
+      "Klik nama algoritma untuk memilih dari 15+ algoritma yang tersedia.",
+      "DFS/BFS membutuhkan Start Node. Dijkstra & Cek Lintasan membutuhkan dua node (Source & Target).",
+      "Tekan ▶ Run untuk menjalankan simulasi dengan animasi step-by-step.",
+      "Tombol Reset menghapus semua input dan animasi.",
+    ],
+  },
+  {
+    title: "Canvas",
+    items: [
+      "Drag node untuk mengatur posisi secara bebas di canvas.",
+      "Node aktif berwarna merah, node terkunjungi berwarna lebih gelap, jalur ditemukan berwarna biru.",
+      "Output algoritma tampil di konsol bagian bawah secara real-time.",
+    ],
+  },
+];
 
 const INITIAL_LINES: ConsoleLine[] = [
   { type: "info", text: "GraphNss" },
@@ -25,12 +63,10 @@ function edgeKey(from: string, to: string, directed: boolean) {
 function CanvasArea({
   graph,
   onMoveNode,
-  onOpenControls,
   highlight,
 }: {
   graph: GraphModel | null;
   onMoveNode: (id: string, pos: { x: number; y: number }) => void;
-  onOpenControls?: () => void;
   highlight: {
     activeNodeId: string | null;
     visitedNodeIds: Set<string>;
@@ -101,6 +137,8 @@ function CanvasArea({
 ───────────────────────────────────────────── */
 export default function BasicGraphShell() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   // ── Graph input state (lifted from ControlSidebar) ──────────────────────
   const [graphInput, setGraphInput] = useState("");
@@ -838,11 +876,10 @@ export default function BasicGraphShell() {
     <div className="relative flex h-full overflow-hidden">
 
       {/* ── Main area: Canvas + Console ── */}
-      <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
         <CanvasArea
           graph={graph}
           onMoveNode={onMoveNode}
-          onOpenControls={() => setDrawerOpen(true)}
           highlight={{
             activeNodeId,
             visitedNodeIds,
@@ -853,10 +890,40 @@ export default function BasicGraphShell() {
           }}
         />
         <ConsolePanel lines={lines} />
+
+        {/* Desktop right-edge button group: toggle + help */}
+        <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 flex-col gap-1">
+          <button
+            type="button"
+            onClick={() => setSidebarOpen((p) => !p)}
+            className="flex items-center justify-center rounded-l-lg transition-all hover:brightness-125 active:scale-95"
+            title={sidebarOpen ? "Sembunyikan sidebar" : "Tampilkan sidebar"}
+            style={{ width: 18, height: 44, background: "var(--bg-surface)", borderTop: "1px solid var(--border-strong)", borderBottom: "1px solid var(--border-strong)", borderLeft: "1px solid var(--border-strong)", color: "var(--text-muted)", boxShadow: "-2px 2px 8px rgba(0,0,0,0.12)" }}
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              {sidebarOpen ? <polyline points="3,2 7,5 3,8" /> : <polyline points="7,2 3,5 7,8" />}
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => setHelpOpen(true)}
+            className="flex items-center justify-center rounded-l-lg transition-all hover:brightness-125 active:scale-95"
+            title="Cara pakai"
+            style={{ width: 18, height: 28, background: "var(--bg-surface)", borderTop: "1px solid var(--border-strong)", borderBottom: "1px solid var(--border-strong)", borderLeft: "1px solid var(--border-strong)", color: "var(--text-muted)", boxShadow: "-2px 2px 8px rgba(0,0,0,0.12)", fontSize: 10 }}
+          >
+            ?
+          </button>
+        </div>
       </main>
 
-      {/* ── Desktop sidebar (lg+): always visible ── */}
-      <div className="hidden lg:flex">
+      {/* ── Desktop sidebar (lg+): collapsible with animation ── */}
+      <div
+        className="hidden lg:flex overflow-hidden shrink-0"
+        style={{
+          maxWidth: sidebarOpen ? "320px" : "0px",
+          transition: "max-width 0.3s cubic-bezier(0.16,1,0.3,1)",
+        }}
+      >
         <ControlSidebar
           isBusy={isBusy}
           graphInput={graphInput}
@@ -908,25 +975,39 @@ export default function BasicGraphShell() {
         </>
       )}
 
-      {/* ── Mobile/Tablet: floating toggle button (when drawer is closed) ── */}
-      {!drawerOpen && (
+      {/* ── Mobile/Tablet: floating button group ── */}
+      <div className="lg:hidden fixed bottom-6 right-5 z-30 flex items-center gap-2">
         <button
           type="button"
-          onClick={() => setDrawerOpen(true)}
-          className="lg:hidden fixed bottom-6 right-5 z-30 flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110 active:scale-95"
-          style={{
-            background: "linear-gradient(135deg, var(--primary), var(--primary-dark))",
-            boxShadow: "0 4px 20px rgba(220,38,38,0.5)",
-          }}
+          onClick={() => setHelpOpen(true)}
+          className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white shadow-lg transition-all hover:brightness-110 active:scale-95"
+          style={{ background: "var(--bg-surface)", border: "1px solid var(--border-strong)", color: "var(--text-base)", boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
-            <line x1="3"  y1="6"  x2="21" y2="6"  />
-            <line x1="3"  y1="12" x2="21" y2="12" />
-            <line x1="3"  y1="18" x2="15" y2="18" />
-          </svg>
-          Kontrol
+          ?
         </button>
-      )}
+        {!drawerOpen && (
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(true)}
+            className="flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110 active:scale-95"
+            style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-dark))", boxShadow: "0 4px 20px rgba(220,38,38,0.5)" }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
+              <line x1="3"  y1="6"  x2="21" y2="6"  />
+              <line x1="3"  y1="12" x2="21" y2="12" />
+              <line x1="3"  y1="18" x2="15" y2="18" />
+            </svg>
+            Kontrol
+          </button>
+        )}
+      </div>
+
+      <HelpModal
+        isOpen={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        pageTitle="Basic Graph"
+        sections={HELP_SECTIONS}
+      />
     </div>
   );
 }
